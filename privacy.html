@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Privacy Policy — Radiology Casebook</title>
+<meta name="description" content="Radiology Casebook privacy policy. The app collects no data — everything stays on your device and in your private iCloud.">
+<style>
+  :root {
+    --blue: #007aff;
+    --ink: #1d1d1f;
+    --ink-2: #6e6e73;
+    --bg: #ffffff;
+    --bg-2: #f5f5f7;
+    --separator: rgba(60,60,67,0.18);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: var(--ink); background: var(--bg); -webkit-font-smoothing: antialiased; line-height: 1.6;
+  }
+  a { color: var(--blue); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .nav {
+    position: sticky; top: 0; z-index: 50;
+    backdrop-filter: saturate(180%) blur(20px); -webkit-backdrop-filter: saturate(180%) blur(20px);
+    background: rgba(255,255,255,0.8); border-bottom: 1px solid var(--separator);
+  }
+  .nav-inner { max-width: 1080px; margin: 0 auto; padding: 0 22px; height: 52px; display: flex; align-items: center; gap: 28px; }
+  .nav-brand { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 17px; color: var(--ink); }
+  .nav-brand:hover { text-decoration: none; }
+  .app-glyph {
+    width: 28px; height: 28px; border-radius: 7px; background: linear-gradient(145deg, #0a84ff, #0055d4);
+    display: inline-flex; align-items: center; justify-content: center; color: #fff; font-size: 15px; font-weight: 700;
+  }
+  .nav-links { margin-left: auto; display: flex; gap: 22px; font-size: 14px; }
+  .nav-links a { color: var(--ink-2); }
+  .nav-links a:hover { color: var(--ink); text-decoration: none; }
+  main { max-width: 720px; margin: 0 auto; padding: 56px 22px 80px; }
+  h1 { font-size: 38px; font-weight: 700; letter-spacing: -0.02em; }
+  .updated { color: var(--ink-2); font-size: 14px; margin-top: 6px; }
+  .tldr {
+    background: var(--bg-2); border-radius: 14px; padding: 20px 22px; margin: 28px 0;
+    font-size: 16px;
+  }
+  .tldr strong { font-weight: 650; }
+  h2 { font-size: 22px; font-weight: 650; margin: 36px 0 10px; letter-spacing: -0.01em; }
+  p { margin: 10px 0; font-size: 16px; }
+  ul { margin: 10px 0 10px 22px; font-size: 16px; }
+  li { margin: 6px 0; }
+  footer { border-top: 1px solid var(--separator); background: var(--bg-2); }
+  .footer-inner {
+    max-width: 1080px; margin: 0 auto; padding: 28px 22px;
+    display: flex; flex-wrap: wrap; gap: 16px; align-items: center; justify-content: space-between;
+    font-size: 13px; color: var(--ink-2);
+  }
+  .footer-inner nav { display: flex; gap: 18px; }
+  .footer-inner a { color: var(--ink-2); }
+  .footer-inner a:hover { color: var(--ink); }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="nav-brand" href="index.html"><span class="app-glyph">R</span> Radiology Casebook</a>
+    <nav class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="support.html">Support</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <h1>Privacy Policy</h1>
+  <p class="updated">Last updated: June 10, 2026</p>
+
+  <div class="tldr">
+    <strong>The short version:</strong> Radiology Casebook does not collect any data. We have no servers, no analytics, no accounts, and no advertising. Everything you create in the app stays on your device and, if you use iCloud, in your own private iCloud account — which we cannot access.
+  </div>
+
+  <h2>Data we collect</h2>
+  <p>None. Radiology Casebook does not collect, store, transmit, sell, or share any personal information or usage data. Per Apple's App Privacy definitions, the app's privacy label is <strong>"Data Not Collected"</strong>: no data linked to you, no data not linked to you, and no data used to track you.</p>
+
+  <h2>Where your content lives</h2>
+  <p>Your questions, tags, sources, synthesis notes, and case images are stored locally on your device using Apple's SwiftData framework. If you are signed in to iCloud, the app syncs this content across your devices using Apple's CloudKit <em>private database</em>. That data belongs to your Apple Account; it is encrypted in transit, governed by <a href="https://www.apple.com/legal/privacy/" target="_blank" rel="noopener">Apple's privacy policy</a>, and is technically inaccessible to the developer of this app.</p>
+
+  <h2>Speech recognition</h2>
+  <p>Voice capture uses Apple's on-device speech recognition. Audio is transcribed locally on your device and is not sent to us or to any third-party service by the app.</p>
+
+  <h2>Network requests</h2>
+  <p>The app works fully offline, with one optional exception: when you add a source by DOI or URL, the app contacts public bibliographic services (such as the CrossRef API) or the website you entered to fetch citation metadata (title, authors, journal). These requests contain only the identifier you typed — never your notes, images, identity, or any device identifiers. If you never add a source, the app makes no network requests at all.</p>
+
+  <h2>Analytics, tracking, and advertising</h2>
+  <ul>
+    <li>No third-party analytics or crash-reporting SDKs.</li>
+    <li>No advertising, ad networks, or tracking of any kind.</li>
+    <li>No cookies, fingerprinting, or device identifiers.</li>
+  </ul>
+
+  <h2>Accounts</h2>
+  <p>The app requires no account, registration, or login. We never see your email address, name, or any other identifier.</p>
+
+  <h2>Children's privacy</h2>
+  <p>Radiology Casebook is intended for medical professionals and trainees. Because the app collects no data from anyone, it likewise collects no data from children.</p>
+
+  <h2>Data deletion</h2>
+  <p>Because we hold no data about you, there is nothing for us to delete. You can remove all app content at any time by deleting content within the app, deleting the app itself, and — if you use iCloud sync — removing the app's data from iCloud in Settings &gt; Apple Account &gt; iCloud &gt; Manage Account Storage.</p>
+
+  <h2>Changes to this policy</h2>
+  <p>If a future version of the app ever changes how data is handled, this page and the App Store privacy label will be updated before that version ships, with the date above revised.</p>
+
+  <h2>Contact</h2>
+  <p>Questions about privacy? Email <a href="mailto:proceduralist@outlook.com">proceduralist@outlook.com</a>.</p>
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <span>© 2026 Radiology Casebook</span>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="support.html">Support</a>
+      <a href="mailto:proceduralist@outlook.com">Contact</a>
+    </nav>
+  </div>
+</footer>
+
+</body>
+</html>

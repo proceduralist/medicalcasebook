@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Radiology Casebook — Turn clinical questions into lasting knowledge</title>
+<meta name="description" content="Radiology Casebook is a native iOS and macOS app for radiology trainees to capture, organize, and synthesize clinical questions into personal reference documents.">
+<style>
+  :root {
+    --blue: #007aff;
+    --green: #34c759;
+    --orange: #ff9500;
+    --purple: #af52de;
+    --yellow: #ffcc00;
+    --red: #ff3b30;
+    --ink: #1d1d1f;
+    --ink-2: #6e6e73;
+    --bg: #ffffff;
+    --bg-2: #f5f5f7;
+    --separator: rgba(60,60,67,0.18);
+    --fill: rgba(120,120,128,0.12);
+    --fill-2: rgba(120,120,128,0.2);
+    --radius: 18px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: var(--ink);
+    background: var(--bg);
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.5;
+  }
+  a { color: var(--blue); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* ===== Nav ===== */
+  .nav {
+    position: sticky; top: 0; z-index: 50;
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    background: rgba(255,255,255,0.8);
+    border-bottom: 1px solid var(--separator);
+  }
+  .nav-inner {
+    max-width: 1080px; margin: 0 auto; padding: 0 22px;
+    height: 52px; display: flex; align-items: center; gap: 28px;
+  }
+  .nav-brand { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 17px; color: var(--ink); }
+  .nav-brand:hover { text-decoration: none; }
+  .app-glyph {
+    width: 28px; height: 28px; border-radius: 7px;
+    background: linear-gradient(145deg, #0a84ff, #0055d4);
+    display: inline-flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 15px; font-weight: 700;
+  }
+  .nav-links { margin-left: auto; display: flex; gap: 22px; font-size: 14px; }
+  .nav-links a { color: var(--ink-2); }
+  .nav-links a:hover { color: var(--ink); text-decoration: none; }
+
+  /* ===== Hero ===== */
+  .hero { text-align: center; padding: 84px 22px 56px; }
+  .hero h1 {
+    font-size: clamp(34px, 6vw, 56px); font-weight: 700; letter-spacing: -0.02em; line-height: 1.08;
+    max-width: 760px; margin: 0 auto;
+  }
+  .hero h1 .accent { color: var(--blue); }
+  .hero p.sub {
+    font-size: clamp(17px, 2.4vw, 21px); color: var(--ink-2);
+    max-width: 640px; margin: 18px auto 0;
+  }
+  .hero .platforms { margin-top: 14px; font-size: 14px; color: var(--ink-2); }
+  .store-badge {
+    margin-top: 28px; display: inline-flex; align-items: center; gap: 10px;
+    background: #000; color: #fff; border-radius: 12px; padding: 10px 20px;
+    font-size: 15px;
+  }
+  .store-badge:hover { text-decoration: none; transform: scale(1.02); }
+  .store-badge .apple { font-size: 26px; line-height: 1; }
+  .store-badge .lines { text-align: left; line-height: 1.2; }
+  .store-badge .lines small { display: block; font-size: 11px; opacity: 0.85; }
+  .store-badge .lines strong { font-size: 17px; font-weight: 600; }
+
+  /* ===== Features ===== */
+  .section { max-width: 1080px; margin: 0 auto; padding: 64px 22px; }
+  .section h2 { font-size: clamp(26px, 4vw, 38px); font-weight: 700; letter-spacing: -0.015em; text-align: center; }
+  .section p.lede { text-align: center; color: var(--ink-2); max-width: 640px; margin: 12px auto 0; font-size: 17px; }
+  .feature-grid {
+    margin-top: 44px; display: grid; gap: 18px;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+  .feature {
+    background: var(--bg-2); border-radius: var(--radius); padding: 26px;
+  }
+  .feature .icon {
+    width: 44px; height: 44px; border-radius: 11px; display: flex; align-items: center;
+    justify-content: center; font-size: 22px; color: #fff; margin-bottom: 14px;
+  }
+  .feature h3 { font-size: 17px; font-weight: 600; margin-bottom: 6px; }
+  .feature p { font-size: 14px; color: var(--ink-2); }
+
+  /* ===== Demo layout ===== */
+  .demo-band { background: var(--bg-2); }
+  .demo-row {
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: center;
+    gap: 48px; padding: 56px 0;
+  }
+  .demo-row + .demo-row { border-top: 1px solid var(--separator); }
+  .demo-copy { max-width: 380px; }
+  .demo-copy .eyebrow { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--blue); }
+  .demo-copy h3 { font-size: 28px; font-weight: 700; letter-spacing: -0.015em; margin: 8px 0 12px; }
+  .demo-copy p { color: var(--ink-2); font-size: 16px; }
+  .demo-copy .hint { margin-top: 14px; font-size: 13px; color: var(--ink-2); background: var(--fill); border-radius: 10px; padding: 10px 14px; display: inline-block; }
+
+  /* ===== iPhone frame ===== */
+  .phone {
+    width: 340px; flex-shrink: 0;
+    background: #0c0c0e; border-radius: 48px; padding: 10px;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.22), inset 0 0 0 2px #3a3a3c;
+  }
+  .phone-screen {
+    background: #f2f2f7; border-radius: 39px; overflow: hidden; position: relative;
+    height: 600px; display: flex; flex-direction: column;
+  }
+  .dynamic-island {
+    position: absolute; top: 9px; left: 50%; transform: translateX(-50%);
+    width: 96px; height: 26px; background: #000; border-radius: 14px; z-index: 10;
+  }
+  .statusbar {
+    height: 44px; flex-shrink: 0; display: flex; align-items: flex-end; justify-content: space-between;
+    padding: 0 26px 2px; font-size: 13px; font-weight: 600;
+  }
+  .screen-body { flex: 1; overflow-y: auto; padding: 10px 14px 20px; -webkit-overflow-scrolling: touch; }
+  .screen-title { font-size: 17px; font-weight: 600; text-align: center; padding: 6px 0 10px; position: relative; }
+  .screen-title .done {
+    position: absolute; right: 2px; top: 3px; font-size: 15px; font-weight: 600; color: var(--blue);
+    background: #fff; padding: 5px 14px; border-radius: 999px; cursor: pointer; border: none;
+  }
+
+  /* ===== iOS components ===== */
+  .card { background: #fff; border-radius: 12px; padding: 14px; margin-bottom: 12px; }
+  .q-title { font-size: 17px; font-weight: 650; line-height: 1.3; }
+  .q-meta { font-size: 12px; color: var(--ink-2); margin-top: 8px; }
+
+  .segmented {
+    display: flex; background: var(--fill-2); border-radius: 9px; padding: 2px; margin-top: 10px;
+  }
+  .segmented button {
+    flex: 1; border: none; background: transparent; border-radius: 7px;
+    font-size: 13px; padding: 6px 2px; cursor: pointer; color: var(--ink);
+    font-family: inherit; transition: background 0.15s;
+  }
+  .segmented button.sel { background: #fff; font-weight: 600; box-shadow: 0 1px 3px rgba(0,0,0,0.12); }
+
+  .cat-segmented { display: flex; background: var(--fill-2); border-radius: 9px; padding: 2px; margin-bottom: 10px; }
+  .cat-segmented button {
+    flex: 1; border: none; background: transparent; border-radius: 7px; padding: 7px 0;
+    font-size: 17px; cursor: pointer; transition: background 0.15s; line-height: 1;
+  }
+  .cat-segmented button.sel-specialty { background: var(--blue); }
+  .cat-segmented button.sel-anatomy { background: var(--green); }
+  .cat-segmented button.sel-disease { background: var(--orange); }
+  .cat-segmented button.sel-kind { background: var(--purple); }
+
+  .search-bar {
+    display: flex; align-items: center; gap: 7px; background: var(--fill);
+    border-radius: 10px; padding: 9px 12px; margin-bottom: 8px;
+  }
+  .search-bar input {
+    border: none; background: transparent; outline: none; font-size: 15px; flex: 1; font-family: inherit;
+  }
+  .search-bar .mag { color: var(--ink-2); font-size: 14px; }
+
+  .tag-list { background: #fff; border-radius: 12px; overflow: hidden; }
+  .tag-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 11px 14px; cursor: pointer; border-bottom: 0.5px solid var(--separator);
+    background: #fff; border-left: none; border-right: none; border-top: none; width: 100%;
+    font-family: inherit; text-align: left;
+  }
+  .tag-row:last-child { border-bottom: none; }
+  .tag-row:active { background: var(--fill); }
+  .tag-row .check { color: var(--blue); font-weight: 700; font-size: 15px; visibility: hidden; }
+  .tag-row.checked .check { visibility: visible; }
+  .tag-row.create-row { background: rgba(0,122,255,0.07); color: var(--ink); font-size: 15px; gap: 8px; justify-content: flex-start; }
+  .tag-row.create-row .plus { color: var(--blue); font-weight: 700; }
+  .pill {
+    display: inline-block; font-size: 14px; padding: 5px 12px; border-radius: 999px;
+  }
+  .pill.specialty { color: var(--blue); background: rgba(0,122,255,0.12); border: 0.5px solid rgba(0,122,255,0.25); }
+  .pill.anatomy  { color: #248a3d; background: rgba(52,199,89,0.14); border: 0.5px solid rgba(52,199,89,0.3); }
+  .pill.disease  { color: #c93400; background: rgba(255,149,0,0.14); border: 0.5px solid rgba(255,149,0,0.3); }
+  .pill.kind     { color: #8944ab; background: rgba(175,82,222,0.13); border: 0.5px solid rgba(175,82,222,0.3); }
+
+  .selected-tags { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 10px; }
+
+  /* Sources & citations */
+  .src-row {
+    display: flex; align-items: center; gap: 10px; padding: 11px 12px;
+    background: #fff; border-radius: 10px; margin-bottom: 8px; transition: background 0.4s;
+  }
+  .src-row.flash { background: rgba(0,122,255,0.18); }
+  .src-num { font-weight: 700; color: var(--blue); font-size: 14px; min-width: 24px; }
+  .src-info { flex: 1; min-width: 0; }
+  .src-info .t { font-size: 13px; font-weight: 600; line-height: 1.25; }
+  .src-info .s { font-size: 11px; color: var(--ink-2); margin-top: 1px; }
+  .cite-btn {
+    border: none; background: rgba(0,122,255,0.12); color: var(--blue);
+    font-size: 12px; font-weight: 600; padding: 6px 11px; border-radius: 999px;
+    cursor: pointer; font-family: inherit; white-space: nowrap;
+  }
+  .cite-btn:active { background: rgba(0,122,255,0.25); }
+  .note-box {
+    background: #fff; border: 1px solid var(--separator); border-radius: 10px;
+    padding: 12px; min-height: 130px; font-size: 15px; line-height: 1.5; cursor: text;
+  }
+  .citation {
+    color: var(--blue); font-weight: 700; cursor: pointer; user-select: none;
+  }
+  .label-h { font-size: 13px; font-weight: 600; color: var(--ink-2); margin: 14px 0 6px; display: flex; align-items: center; gap: 6px; }
+
+  /* Repository grid */
+  .repo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .repo-tile {
+    background: #fff; border-radius: 10px; padding: 7px; border: 0.5px solid var(--separator);
+    transition: opacity 0.3s, transform 0.3s;
+  }
+  .repo-tile.removing { opacity: 0; transform: scale(0.85); }
+  .repo-thumb { position: relative; border-radius: 6px; overflow: hidden; height: 108px; }
+  .repo-thumb svg { display: block; width: 100%; height: 100%; }
+  .star-btn {
+    position: absolute; top: 5px; right: 5px; width: 26px; height: 26px;
+    border-radius: 50%; background: rgba(0,0,0,0.45); border: none; cursor: pointer;
+    color: var(--yellow); font-size: 13px; display: flex; align-items: center; justify-content: center;
+  }
+  .repo-cap { font-size: 12px; font-weight: 600; margin-top: 6px; line-height: 1.25; }
+  .repo-q { font-size: 10.5px; color: var(--ink-2); margin-top: 2px; line-height: 1.3; }
+
+  /* iOS alert */
+  .ios-alert-backdrop {
+    position: absolute; inset: 0; background: rgba(0,0,0,0.35); z-index: 20;
+    display: flex; align-items: center; justify-content: center; border-radius: 39px;
+  }
+  .ios-alert {
+    width: 250px; background: rgba(248,248,248,0.97); border-radius: 14px; overflow: hidden;
+    text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+  }
+  .ios-alert .a-title { font-size: 16px; font-weight: 650; padding: 16px 16px 4px; }
+  .ios-alert .a-msg { font-size: 12.5px; color: var(--ink); padding: 0 16px 14px; line-height: 1.35; }
+  .ios-alert .a-buttons { display: flex; border-top: 0.5px solid var(--separator); }
+  .ios-alert .a-buttons button {
+    flex: 1; border: none; background: transparent; padding: 11px 0; font-size: 16px;
+    cursor: pointer; font-family: inherit; color: var(--blue);
+  }
+  .ios-alert .a-buttons button + button { border-left: 0.5px solid var(--separator); }
+  .ios-alert .a-buttons .destructive { color: var(--red); font-weight: 600; }
+  .ios-alert .a-buttons .cancel { font-weight: 600; }
+
+  .reset-link { background:none; border:none; color: var(--blue); font-size: 13px; cursor: pointer; font-family: inherit; padding: 6px 0; }
+
+  /* Sheet inside phone */
+  .sheet {
+    position: absolute; left: 0; right: 0; bottom: 0; top: 54px; background: #f2f2f7;
+    border-radius: 16px 16px 39px 39px; z-index: 15; padding: 10px 14px;
+    transform: translateY(105%); transition: transform 0.35s cubic-bezier(0.32,0.72,0,1);
+    display: flex; flex-direction: column;
+  }
+  .sheet.open { transform: translateY(0); }
+  .sheet .grabber { width: 36px; height: 5px; border-radius: 3px; background: var(--fill-2); margin: 2px auto 8px; }
+  .sheet-scroll { flex: 1; overflow-y: auto; }
+
+  /* ===== Privacy strip ===== */
+  .privacy-strip { text-align: center; padding: 72px 22px; }
+  .privacy-strip .lock { font-size: 40px; }
+  .privacy-strip h2 { margin-top: 10px; }
+  .privacy-strip p { color: var(--ink-2); max-width: 560px; margin: 12px auto 0; font-size: 16px; }
+
+  /* ===== Footer ===== */
+  footer { border-top: 1px solid var(--separator); background: var(--bg-2); }
+  .footer-inner {
+    max-width: 1080px; margin: 0 auto; padding: 28px 22px;
+    display: flex; flex-wrap: wrap; gap: 16px; align-items: center; justify-content: space-between;
+    font-size: 13px; color: var(--ink-2);
+  }
+  .footer-inner nav { display: flex; gap: 18px; }
+  .footer-inner a { color: var(--ink-2); }
+  .footer-inner a:hover { color: var(--ink); }
+
+  @media (max-width: 760px) {
+    .demo-row { padding: 44px 18px; }
+    .demo-copy { max-width: 100%; }
+    .nav-links { gap: 14px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="nav-brand" href="index.html"><span class="app-glyph">R</span> Radiology Casebook</a>
+    <nav class="nav-links">
+      <a href="#demos">Live Demo</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="support.html">Support</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <h1>Turn every clinical question into <span class="accent">lasting knowledge</span>.</h1>
+  <p class="sub">Radiology Casebook is the research companion for radiology trainees — capture questions on the fly, attach real sources, write cited synthesis notes, and build your personal case image repository.</p>
+  <p class="platforms">Native on iPhone, iPad &amp; Mac · iCloud sync · Works offline</p>
+  <!-- TODO: replace href="#" with your real App Store URL -->
+  <a class="store-badge" href="#" aria-label="Download on the App Store">
+    <span class="apple">&#63743;</span>
+    <span class="lines"><small>Download on the</small><strong>App Store</strong></span>
+  </a>
+</section>
+
+<section class="section">
+  <h2>Built for how radiologists actually learn</h2>
+  <p class="lede">A question comes up at the workstation. You jot it down, find the answer later, and make it stick — all in one place.</p>
+  <div class="feature-grid">
+    <div class="feature">
+      <div class="icon" style="background:var(--blue)">&#10003;</div>
+      <h3>Fast question capture</h3>
+      <p>Type or dictate a question in seconds with on-device speech recognition, then get back to the list.</p>
+    </div>
+    <div class="feature">
+      <div class="icon" style="background:var(--green)">#</div>
+      <h3>Four-dimension tagging</h3>
+      <p>Organize by Specialty, Anatomy, Disease, and Kind. Create, rename, and merge your own tags as your taxonomy grows.</p>
+    </div>
+    <div class="feature">
+      <div class="icon" style="background:var(--orange)">&#128279;</div>
+      <h3>Real sources, real citations</h3>
+      <p>Add a DOI and metadata is fetched automatically. Insert numbered in-text citations that stay linked to their sources.</p>
+    </div>
+    <div class="feature">
+      <div class="icon" style="background:var(--purple)">&#9998;</div>
+      <h3>Synthesis notes</h3>
+      <p>Write the answer in your own words with a rich-text editor. Tap any citation to jump to its source.</p>
+    </div>
+    <div class="feature">
+      <div class="icon" style="background:var(--yellow);color:#1d1d1f">&#9733;</div>
+      <h3>Case image repository</h3>
+      <p>Favorite key images from any case and browse them all in one filterable repository, tagged automatically.</p>
+    </div>
+    <div class="feature">
+      <div class="icon" style="background:var(--ink)">&#8593;</div>
+      <h3>Export &amp; sync</h3>
+      <p>Export answered questions to PDF. Everything syncs privately through your own iCloud — no accounts, no servers.</p>
+    </div>
+  </div>
+</section>
+
+<section id="demos" class="demo-band">
+  <div class="section" style="padding-bottom:0">
+    <h2>Try it right here</h2>
+    <p class="lede">These demos are interactive — tap and type just like in the app.</p>
+  </div>
+
+  <!-- ============ DEMO 1: Question lifecycle + tags ============ -->
+  <div class="demo-row">
+    <div class="demo-copy">
+      <div class="eyebrow">Capture &amp; organize</div>
+      <h3>A home for every question</h3>
+      <p>Each question moves through a simple lifecycle — Incomplete, Ongoing, Answered — and carries tags across four clinical dimensions so you can find it again instantly.</p>
+      <div class="hint">&#128073; Tap a status, then tap <b>Add Tag</b> to open the tag picker. Switch categories, search, and create your own tag.</div>
+    </div>
+    <div class="phone">
+      <div class="phone-screen" id="screen1">
+        <div class="dynamic-island"></div>
+        <div class="statusbar"><span>9:41</span><span>&#9679;&#9679;&#9679;&#9679; &#9889;</span></div>
+        <div class="screen-body">
+          <div class="card">
+            <div class="q-title">What type of injection is used for thyroid scintigraphy?</div>
+            <div class="q-meta">Created Jun 10, 2026</div>
+            <div class="segmented" id="statusSeg">
+              <button class="sel">Incomplete</button>
+              <button>Ongoing</button>
+              <button>Answered</button>
+            </div>
+          </div>
+          <div class="card">
+            <div class="label-h">&#127991; Tags</div>
+            <div class="selected-tags" id="selectedTags"></div>
+            <button class="cite-btn" style="margin-top:10px" id="openTagSheet">+ Add Tag</button>
+          </div>
+          <div class="card">
+            <div class="label-h">&#128279; Sources</div>
+            <div style="font-size:13px;color:var(--ink-2)">Add a DOI or URL — metadata is fetched for you.</div>
+          </div>
+        </div>
+
+        <!-- Tag picker sheet -->
+        <div class="sheet" id="tagSheet">
+          <div class="grabber"></div>
+          <div class="screen-title">Add Tags <button class="done" id="closeTagSheet">Done</button></div>
+          <div class="cat-segmented" id="catSeg">
+            <button class="sel-specialty" data-cat="specialty" title="Specialty">&#129658;</button>
+            <button data-cat="anatomy" title="Anatomy">&#129485;</button>
+            <button data-cat="disease" title="Disease">&#129466;</button>
+            <button data-cat="kind" title="Kind">&#128203;</button>
+          </div>
+          <div class="search-bar">
+            <span class="mag">&#128269;</span>
+            <input id="tagSearch" type="text" placeholder="Search or create tag..." autocomplete="off">
+          </div>
+          <div class="sheet-scroll"><div class="tag-list" id="tagListEl"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ DEMO 2: Citations ============ -->
+  <div class="demo-row">
+    <div class="phone">
+      <div class="phone-screen">
+        <div class="dynamic-island"></div>
+        <div class="statusbar"><span>9:41</span><span>&#9679;&#9679;&#9679;&#9679; &#9889;</span></div>
+        <div class="screen-body">
+          <div class="label-h" style="margin-top:4px">&#128279; Sources</div>
+          <div class="src-row" id="src1">
+            <span class="src-num">[1]</span>
+            <span class="src-info">
+              <span class="t">Thyroid scintigraphy: technique and interpretation</span><br>
+              <span class="s">Radiographics · doi:10.1148/rg.2021200123</span>
+            </span>
+            <button class="cite-btn" data-src="1">Cite</button>
+          </div>
+          <div class="src-row" id="src2">
+            <span class="src-info" style="margin-left:34px">
+              <span class="t">SNMMI procedure standard for thyroid scintigraphy</span><br>
+              <span class="s">J Nucl Med Technol · doi:10.2967/jnmt.120.243964</span>
+            </span>
+            <button class="cite-btn" data-src="2">Cite</button>
+          </div>
+          <div class="label-h">&#9998; Synthesis Note</div>
+          <div class="note-box" id="noteBox">Tc-99m pertechnetate is given IV and trapped by the thyroid without organification, so imaging happens at 15–30 minutes.<span id="caret"></span></div>
+          <div style="text-align:center"><button class="reset-link" id="resetNote">Reset demo</button></div>
+        </div>
+      </div>
+    </div>
+    <div class="demo-copy">
+      <div class="eyebrow">Cite as you write</div>
+      <h3>Notes that show their work</h3>
+      <p>Tap <b>Cite</b> on any source and a numbered citation pill drops into your note at the cursor. Citations renumber themselves automatically, and tapping a pill flashes the source it points to.</p>
+      <div class="hint">&#128073; Tap <b>Cite</b> on a source, then tap the blue <b>[1]</b> pill in the note.</div>
+    </div>
+  </div>
+
+  <!-- ============ DEMO 3: Case repository ============ -->
+  <div class="demo-row">
+    <div class="demo-copy">
+      <div class="eyebrow">Case image repository</div>
+      <h3>Your greatest hits, one grid</h3>
+      <p>Star an image on any case and it joins the repository — tagged with the question's specialty automatically. Tap the star on a tile to remove it; the image stays safely on its original case.</p>
+      <div class="hint">&#128073; Tap the &#11088; on a tile and confirm to remove it from the repository.</div>
+    </div>
+    <div class="phone">
+      <div class="phone-screen" id="repoScreen">
+        <div class="dynamic-island"></div>
+        <div class="statusbar"><span>9:41</span><span>&#9679;&#9679;&#9679;&#9679; &#9889;</span></div>
+        <div class="screen-body">
+          <div class="screen-title" style="text-align:left;padding-left:2px">Case Repository</div>
+          <div class="repo-grid" id="repoGrid"></div>
+          <div style="text-align:center;margin-top:10px"><button class="reset-link" id="resetRepo">Reset demo</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="height:56px"></div>
+</section>
+
+<section class="privacy-strip">
+  <div class="lock">&#128274;</div>
+  <h2>Private by design</h2>
+  <p>Radiology Casebook collects nothing. Your questions, notes, and images live on your device and in your own private iCloud — never on our servers, because there aren't any. <a href="privacy.html">Read the privacy policy</a>.</p>
+</section>
+
+<footer>
+  <div class="footer-inner">
+    <span>© 2026 Radiology Casebook</span>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="support.html">Support</a>
+      <a href="mailto:proceduralist@outlook.com">Contact</a>
+    </nav>
+  </div>
+</footer>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ---------- Demo 1: status segmented control ---------- */
+  var statusSeg = document.getElementById("statusSeg");
+  statusSeg.addEventListener("click", function (e) {
+    if (e.target.tagName !== "BUTTON") return;
+    Array.prototype.forEach.call(statusSeg.children, function (b) { b.classList.remove("sel"); });
+    e.target.classList.add("sel");
+  });
+
+  /* ---------- Demo 1: tag picker ---------- */
+  var tagData = {
+    specialty: ["Body", "Breast", "Cardiothoracic", "Emergency Radiology", "Interventional Radiology", "Musculoskeletal", "Neuroradiology", "Nuclear Imaging", "Pediatric Radiology"],
+    anatomy: ["Adrenal", "Aorta", "Liver", "Thyroid"],
+    disease: ["Graves disease", "Thyroiditis", "Toxic adenoma"],
+    kind: ["Anatomy / Variants", "Imaging Findings", "Indications", "Recommendations", "Technique"]
+  };
+  var selected = { specialty: ["Nuclear Imaging"], anatomy: ["Thyroid"], disease: [], kind: ["Technique"] };
+  var currentCat = "specialty";
+  var catColors = { specialty: "specialty", anatomy: "anatomy", disease: "disease", kind: "kind" };
+
+  var sheet = document.getElementById("tagSheet");
+  var catSeg = document.getElementById("catSeg");
+  var searchEl = document.getElementById("tagSearch");
+  var listEl = document.getElementById("tagListEl");
+  var selectedTagsEl = document.getElementById("selectedTags");
+
+  function renderSelected() {
+    selectedTagsEl.innerHTML = "";
+    Object.keys(selected).forEach(function (cat) {
+      selected[cat].forEach(function (t) {
+        var s = document.createElement("span");
+        s.className = "pill " + catColors[cat];
+        s.textContent = t;
+        selectedTagsEl.appendChild(s);
+      });
+    });
+    if (!selectedTagsEl.children.length) {
+      selectedTagsEl.innerHTML = '<span style="font-size:13px;color:var(--ink-2)">No tags yet — add some below.</span>';
+    }
+  }
+
+  function renderList() {
+    var q = searchEl.value.trim().toLowerCase();
+    var tags = tagData[currentCat].filter(function (t) { return !q || t.toLowerCase().indexOf(q) !== -1; });
+    listEl.innerHTML = "";
+    var exact = tagData[currentCat].some(function (t) { return t.toLowerCase() === q; });
+    if (q && !exact) {
+      var c = document.createElement("button");
+      c.className = "tag-row create-row";
+      c.innerHTML = '<span class="plus">+</span> Create &ldquo;<b>' + escapeHtml(searchEl.value.trim()) + '</b>&rdquo;';
+      c.addEventListener("click", function () {
+        var name = searchEl.value.trim();
+        tagData[currentCat].push(name);
+        tagData[currentCat].sort();
+        selected[currentCat].push(name);
+        searchEl.value = "";
+        renderList(); renderSelected();
+      });
+      listEl.appendChild(c);
+    }
+    tags.forEach(function (t) {
+      var row = document.createElement("button");
+      row.className = "tag-row" + (selected[currentCat].indexOf(t) !== -1 ? " checked" : "");
+      row.innerHTML = '<span class="pill ' + catColors[currentCat] + '">' + escapeHtml(t) + '</span><span class="check">&#10003;</span>';
+      row.addEventListener("click", function () {
+        var i = selected[currentCat].indexOf(t);
+        if (i === -1) selected[currentCat].push(t); else selected[currentCat].splice(i, 1);
+        renderList(); renderSelected();
+      });
+      listEl.appendChild(row);
+    });
+    if (!tags.length && (exact || !q)) {
+      listEl.innerHTML = '<div style="padding:30px;text-align:center;color:var(--ink-2);font-size:13px">No tags found<br>Type to create a new tag</div>';
+    }
+  }
+
+  function escapeHtml(s) {
+    return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  }
+
+  catSeg.addEventListener("click", function (e) {
+    var btn = e.target.closest("button");
+    if (!btn) return;
+    currentCat = btn.dataset.cat;
+    Array.prototype.forEach.call(catSeg.children, function (b) {
+      b.className = (b === btn) ? "sel-" + currentCat : "";
+    });
+    searchEl.value = "";
+    renderList();
+  });
+  searchEl.addEventListener("input", renderList);
+  document.getElementById("openTagSheet").addEventListener("click", function () { sheet.classList.add("open"); });
+  document.getElementById("closeTagSheet").addEventListener("click", function () { sheet.classList.remove("open"); });
+
+  renderSelected();
+  renderList();
+
+  /* ---------- Demo 2: citations ---------- */
+  var noteBox = document.getElementById("noteBox");
+  var caretSpan = document.getElementById("caret");
+  var noteOriginal = noteBox.innerHTML;
+  var citeCount = 0;
+
+  function flashSource(n) {
+    var row = document.getElementById("src" + n);
+    if (!row) return;
+    row.classList.add("flash");
+    setTimeout(function () { row.classList.remove("flash"); }, 700);
+  }
+
+  document.querySelectorAll(".cite-btn[data-src]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var n = btn.dataset.src;
+      var existing = noteBox.querySelector('.citation[data-n="' + n + '"]');
+      if (existing) { flashSource(n); return; }
+      citeCount++;
+      var pill = document.createElement("span");
+      pill.className = "citation";
+      pill.dataset.n = n;
+      pill.textContent = " [" + n + "]";
+      pill.title = "Tap to highlight the cited source";
+      pill.addEventListener("click", function () { flashSource(n); });
+      caretSpan.parentNode.insertBefore(pill, caretSpan);
+      flashSource(n);
+    });
+  });
+
+  document.getElementById("resetNote").addEventListener("click", function () {
+    noteBox.innerHTML = noteOriginal;
+    caretSpan = document.getElementById("caret");
+    citeCount = 0;
+  });
+
+  /* ---------- Demo 3: repository ---------- */
+  var repoScreen = document.getElementById("repoScreen");
+  var repoGrid = document.getElementById("repoGrid");
+  var tiles = [
+    { cap: "Cold nodule, RLL thyroid", q: "What type of injection is used for thyroid scintigraphy?", art: "nuclear" },
+    { cap: "Ring-enhancing lesion", q: "MRI features of cerebral abscess vs GBM?", art: "mri" },
+    { cap: "Pneumothorax, deep sulcus", q: "Supine signs of pneumothorax?", art: "cxr" },
+    { cap: "Target sign, intussusception", q: "US criteria for pediatric intussusception?", art: "us" }
+  ];
+
+  var artSVG = {
+    nuclear: '<svg viewBox="0 0 120 108" preserveAspectRatio="none"><rect width="120" height="108" fill="#111"/><ellipse cx="48" cy="54" rx="16" ry="26" fill="#3aa0ff" opacity="0.85"/><ellipse cx="76" cy="54" rx="15" ry="25" fill="#3aa0ff" opacity="0.55"/><ellipse cx="76" cy="64" rx="6" ry="8" fill="#111"/><text x="6" y="100" fill="#666" font-size="8" font-family="monospace">Tc-99m ANT</text></svg>',
+    mri: '<svg viewBox="0 0 120 108" preserveAspectRatio="none"><rect width="120" height="108" fill="#0a0a0a"/><ellipse cx="60" cy="54" rx="44" ry="48" fill="#2c2c2e"/><ellipse cx="60" cy="54" rx="36" ry="40" fill="#48484a"/><circle cx="74" cy="44" r="11" fill="#1c1c1e" stroke="#d1d1d6" stroke-width="3"/><text x="6" y="100" fill="#666" font-size="8" font-family="monospace">T1+C AX</text></svg>',
+    cxr: '<svg viewBox="0 0 120 108" preserveAspectRatio="none"><rect width="120" height="108" fill="#000"/><path d="M20 14 Q60 4 100 14 L96 96 Q60 104 24 96 Z" fill="#3a3a3c"/><path d="M30 20 Q45 16 56 22 L54 88 Q40 92 32 86 Z" fill="#1c1c1e"/><path d="M64 22 Q80 16 92 22 L88 86 Q74 92 66 88 Z" fill="#0e0e0e"/><text x="6" y="100" fill="#666" font-size="8" font-family="monospace">CXR PA</text></svg>',
+    us: '<svg viewBox="0 0 120 108" preserveAspectRatio="none"><rect width="120" height="108" fill="#000"/><path d="M60 8 L112 92 Q60 110 8 92 Z" fill="#1c1c1e"/><circle cx="60" cy="62" r="20" fill="none" stroke="#8e8e93" stroke-width="4"/><circle cx="60" cy="62" r="11" fill="none" stroke="#aeaeb2" stroke-width="3"/><circle cx="60" cy="62" r="4" fill="#d1d1d6"/><text x="6" y="100" fill="#666" font-size="8" font-family="monospace">US TRV</text></svg>'
+  };
+
+  function renderRepo() {
+    repoGrid.innerHTML = "";
+    tiles.forEach(function (t, i) {
+      var tile = document.createElement("div");
+      tile.className = "repo-tile";
+      tile.innerHTML =
+        '<div class="repo-thumb">' + artSVG[t.art] +
+        '<button class="star-btn" title="Remove from Repository" aria-label="Remove from Repository">&#9733;</button></div>' +
+        '<div class="repo-cap">' + escapeHtml(t.cap) + '</div>' +
+        '<div class="repo-q">' + escapeHtml(t.q) + '</div>';
+      tile.querySelector(".star-btn").addEventListener("click", function () {
+        showAlert(t, tile, i);
+      });
+      repoGrid.appendChild(tile);
+    });
+  }
+
+  function showAlert(t, tile, index) {
+    var backdrop = document.createElement("div");
+    backdrop.className = "ios-alert-backdrop";
+    backdrop.innerHTML =
+      '<div class="ios-alert">' +
+      '<div class="a-title">Remove from Repository?</div>' +
+      '<div class="a-msg">&ldquo;' + escapeHtml(t.cap) + '&rdquo; will be removed from the Case Repository. The image stays on its question, where you can favorite it again.</div>' +
+      '<div class="a-buttons"><button class="cancel">Cancel</button><button class="destructive">Remove</button></div>' +
+      '</div>';
+    backdrop.querySelector(".cancel").addEventListener("click", function () { backdrop.remove(); });
+    backdrop.querySelector(".destructive").addEventListener("click", function () {
+      backdrop.remove();
+      tile.classList.add("removing");
+      setTimeout(function () {
+        tiles = tiles.filter(function (x) { return x !== t; });
+        renderRepo();
+      }, 300);
+    });
+    repoScreen.appendChild(backdrop);
+  }
+
+  var tilesOriginal = tiles.slice();
+  document.getElementById("resetRepo").addEventListener("click", function () {
+    tiles = tilesOriginal.slice();
+    renderRepo();
+  });
+
+  renderRepo();
+})();
+</script>
+</body>
+</html>
