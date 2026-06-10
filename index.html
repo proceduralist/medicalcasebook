@@ -93,10 +93,20 @@
   .section { max-width: 1080px; margin: 0 auto; padding: 64px 22px; }
   .section h2 { font-size: clamp(26px, 4vw, 38px); font-weight: 700; letter-spacing: -0.015em; text-align: center; }
   .section p.lede { text-align: center; color: var(--ink-2); max-width: 640px; margin: 12px auto 0; font-size: 17px; }
+  /* Mobile first: 1 column layout */
+.feature-grid {
+  margin-top: 44px; 
+  display: grid; 
+  gap: 18px;
+  grid-template-columns: 1fr;
+}
+
+/* Tablet & Desktop: Hard forces a perfectly balanced 2x2 grid */
+@media (min-width: 600px) {
   .feature-grid {
-    margin-top: 44px; display: grid; gap: 18px;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+}
   .feature {
     background: var(--bg-2); border-radius: var(--radius); padding: 26px;
   }
