@@ -1,0 +1,1172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<link rel="icon" type="image/png" href="icon.png">
+<link rel="apple-touch-icon" href="icon.png">
+<title>Medical Casebook — A casebook for everything you look up</title>
+<meta name="description" content="Medical Casebook is a native Mac and iPhone app for clinicians and trainees: capture topics as they come up, cite your sources, write notes in sections, and quiz yourself on what you want to remember.">
+<style>
+  :root {
+    /* Palette — PaperTheme, the app's fixed warm-paper scheme */
+    --paper:        #F7F3EC;
+    --paper-bright: #FDFBF6;
+    --paper-warm:   #F1EBDF;
+    --bar:          #FBF7EF;
+
+    --ink:       #211D17;
+    --headline:  #2B2317;
+    --body:      #41392C;
+    --secondary: #5C5240;
+    --muted:     #877C67;
+    --faint:     #A3977F;
+    --letter:    #BCAE90;
+
+    --hairline: #E4DDD0;
+    --border:   #D8CFBE;
+    --rail-border: #E5DCC9;
+    --card-border: #E2D7BF;
+
+    --rust:       #A3532F;
+    --rust-deep:  #8A4526;
+    --terracotta: #B0562C;
+    --badge-bg:   #F6E1D5;
+
+    --chip:   #EFE6D6;
+    --track:  #EEE7DA;
+    --hover:  #EAE2CF;
+    --study:        #F3EAD9;
+    --study-border: #E0C9A6;
+
+    /* Sticky-note colours, straight from StickyNoteTheme */
+    --sand:  #F3EAD9;
+    --clay:  #F6E1D5;
+    --sage:  #E9EBDC;
+    --slate: #E2E6EC;
+
+    --serif: "New York", "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+    --sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+
+    --shadow-soft: 0 1px 2px rgba(60,45,20,0.05);
+    --shadow-card: 0 18px 44px rgba(60,45,20,0.12);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--sans);
+    color: var(--body);
+    background: var(--paper);
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.55;
+    font-size: 15px;
+  }
+  a { color: var(--rust); text-decoration: none; }
+  a:hover { color: var(--rust-deep); text-decoration: underline; }
+  img, svg { max-width: 100%; }
+
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 22px; }
+  section[id], #demos { scroll-margin-top: 68px; }
+
+  /* ===== Shared type ===== */
+  .overline {
+    font-family: var(--mono); font-size: 11px; font-weight: 600;
+    letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted);
+  }
+  .overline.rust { color: var(--rust); }
+  h1, h2, h3, .serif { font-family: var(--serif); color: var(--ink); font-weight: 600; }
+  .rule { height: 1px; background: var(--hairline); border: 0; }
+
+  .pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12.5px; font-weight: 600; font-family: var(--sans);
+    padding: 6px 16px; border-radius: 999px;
+    border: 1px solid var(--border); background: var(--paper);
+    color: var(--secondary); cursor: pointer; transition: background .15s, color .15s, border-color .15s;
+  }
+  .pill:hover { background: var(--chip); text-decoration: none; }
+  .pill.filled { background: var(--ink); color: var(--paper-bright); border-color: var(--ink); }
+  .pill.filled:hover { background: #000; color: var(--paper-bright); }
+  .pill.rust { background: var(--rust); color: var(--paper-bright); border-color: var(--rust); }
+  .chip {
+    display: inline-block; font-size: 12.5px; font-weight: 600;
+    padding: 5px 12px; border-radius: 999px;
+    background: var(--chip); color: var(--secondary);
+  }
+
+  /* ===== Nav ===== */
+  .nav {
+    position: sticky; top: 0; z-index: 60;
+    background: rgba(247,243,236,0.86);
+    backdrop-filter: saturate(160%) blur(14px);
+    -webkit-backdrop-filter: saturate(160%) blur(14px);
+    border-bottom: 1px solid var(--hairline);
+  }
+  .nav-inner { display: flex; align-items: center; gap: 26px; height: 56px; }
+  .brand { display: flex; align-items: center; gap: 10px; color: var(--ink); font-weight: 600; font-size: 16px; white-space: nowrap; }
+  .brand:hover { text-decoration: none; color: var(--ink); }
+  .glyph { width: 28px; height: 28px; border-radius: 7px; flex-shrink: 0; display: block; box-shadow: var(--shadow-soft); }
+  .nav-links { margin-left: auto; display: flex; gap: 20px; font-size: 13.5px; }
+  .nav-links a { color: var(--secondary); white-space: nowrap; }
+  .nav-links a:hover { color: var(--rust); text-decoration: none; }
+
+  /* ===== Hero ===== */
+  .hero { text-align: center; padding: 74px 0 40px; }
+  .hero h1 {
+    font-size: clamp(36px, 6.4vw, 62px); line-height: 1.04; letter-spacing: -0.012em;
+    max-width: 15ch; margin: 16px auto 0;
+  }
+  .hero h1 em { font-style: italic; color: var(--rust); }
+  .hero .sub {
+    font-size: clamp(16px, 2.2vw, 19px); color: var(--secondary);
+    max-width: 60ch; margin: 20px auto 0;
+  }
+  .hero .meta { margin-top: 18px; font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.08em; color: var(--faint); text-transform: uppercase; }
+  .cta-row { margin-top: 26px; display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .store-badge {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: var(--ink); color: var(--paper-bright); border-radius: 12px;
+    padding: 9px 20px; border: 1px solid var(--ink);
+  }
+  .store-badge:hover { text-decoration: none; color: var(--paper-bright); background: #000; }
+  .store-badge .apple { font-size: 24px; line-height: 1; }
+  .store-badge .lines { text-align: left; line-height: 1.2; }
+  .store-badge .lines small { display: block; font-size: 10.5px; opacity: 0.82; }
+  .store-badge .lines strong { font-size: 16px; font-weight: 600; }
+  .soon { margin-top: 16px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--faint); }
+  .tag-soon {
+    display: inline-block; margin-left: 8px; font-family: var(--mono); font-size: 9.5px;
+    letter-spacing: 0.12em; text-transform: uppercase; color: var(--terracotta);
+    background: var(--badge-bg); border-radius: 999px; padding: 3px 9px; vertical-align: 2px;
+  }
+
+  /* ===== Sections ===== */
+  .section { padding: 62px 0; }
+  .section-head { text-align: center; max-width: 62ch; margin: 0 auto 44px; }
+  .section-head h2 { font-size: clamp(27px, 4vw, 38px); letter-spacing: -0.01em; margin-top: 10px; }
+  .section-head p { color: var(--secondary); margin-top: 12px; font-size: 16px; }
+  .band { background: var(--paper-warm); border-top: 1px solid var(--hairline); border-bottom: 1px solid var(--hairline); }
+
+  /* ===== Feature grid ===== */
+  .features { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(268px, 1fr)); }
+  .feature {
+    background: var(--paper-bright); border: 1px solid var(--hairline);
+    border-radius: 14px; padding: 22px 22px 24px;
+  }
+  .feature .n { font-family: var(--mono); font-size: 11px; font-weight: 600; letter-spacing: 0.14em; color: var(--rust); }
+  .feature h3 { font-size: 20px; margin: 8px 0 8px; letter-spacing: -0.005em; }
+  .feature p { font-size: 14px; color: var(--secondary); }
+  .feature .tail { margin-top: 12px; font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--faint); }
+
+  /* ===== Platform split ===== */
+  .split { display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
+  .plat {
+    background: var(--paper-bright); border: 1px solid var(--hairline);
+    border-radius: 16px; padding: 26px 26px 28px;
+  }
+  .plat.mac { background: var(--paper-bright); }
+  .plat h3 { font-size: 24px; margin: 10px 0 4px; }
+  .plat .role { font-size: 14px; color: var(--secondary); }
+  .plat ul { list-style: none; margin-top: 18px; }
+  .plat li { display: flex; gap: 10px; padding: 9px 0; border-top: 1px solid var(--hairline); font-size: 14px; color: var(--body); }
+  .plat li:first-child { border-top: 0; }
+  .plat li .k { flex-shrink: 0; width: 18px; color: var(--rust); font-family: var(--mono); font-size: 11px; padding-top: 3px; }
+  .plat .note {
+    margin-top: 18px; font-size: 13px; color: var(--secondary);
+    background: var(--study); border: 1px solid var(--study-border);
+    border-radius: 10px; padding: 11px 14px;
+  }
+
+  /* ===== Demo scaffolding ===== */
+  .demo { padding: 46px 0; }
+  .demo + .demo { border-top: 1px solid var(--hairline); }
+  .demo-head { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 18px; margin-bottom: 22px; }
+  .demo-head .copy { flex: 1 1 380px; }
+  .demo-head h3 { font-size: clamp(22px, 3vw, 30px); margin-top: 8px; letter-spacing: -0.01em; }
+  .demo-head p { color: var(--secondary); font-size: 15px; margin-top: 8px; max-width: 62ch; }
+  .hint {
+    font-size: 12.5px; color: var(--secondary); background: var(--paper-bright);
+    border: 1px solid var(--border); border-radius: 999px; padding: 7px 15px;
+    display: inline-block; margin-top: 14px;
+  }
+  .hint b { color: var(--rust); }
+
+  /* ===== Mac window ===== */
+  .mac-window {
+    border-radius: 12px; overflow: hidden; border: 1px solid var(--card-border);
+    box-shadow: var(--shadow-card); background: var(--paper-warm);
+  }
+  .titlebar {
+    height: 38px; background: var(--bar); border-bottom: 1px solid var(--rail-border);
+    display: flex; align-items: center; padding: 0 13px; gap: 8px;
+  }
+  .lights { display: flex; gap: 7px; }
+  .lights i { width: 11px; height: 11px; border-radius: 50%; display: block; }
+  .lights .r { background: #FF5F57; } .lights .y { background: #FEBC2E; } .lights .g { background: #28C840; }
+  .titlebar .t { font-size: 12.5px; font-weight: 600; color: var(--secondary); margin: 0 auto; padding-right: 44px; }
+
+  /* ===== Demo 1: topic directory ===== */
+  .dir { display: flex; height: 520px; background: var(--paper-warm); }
+  .dir-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+  .dir-head { padding: 16px 20px 12px; }
+  .dir-head .count { font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  .dir-head h4 { font-family: var(--serif); font-size: 25px; color: var(--headline); margin-top: 4px; font-weight: 600; }
+  .tabs { display: inline-flex; gap: 2px; padding: 3px; background: var(--track); border-radius: 999px; margin-top: 12px; }
+  .tabs button {
+    border: 0; background: transparent; font-family: inherit; cursor: pointer;
+    font-size: 12px; font-weight: 600; color: var(--muted); padding: 5px 13px; border-radius: 999px;
+  }
+  .tabs button.on { background: var(--rust); color: var(--paper-bright); }
+  .letters { display: flex; flex-wrap: wrap; gap: 2px; padding: 10px 20px 8px; border-bottom: 1px solid var(--rail-border); }
+  .letters button {
+    border: 0; background: transparent; cursor: pointer; font-family: var(--mono);
+    font-size: 11px; font-weight: 600; color: var(--faint); width: 20px; height: 20px; border-radius: 5px;
+  }
+  .letters button:hover { background: var(--hover); color: var(--secondary); }
+  .letters button.on { color: var(--terracotta); background: var(--badge-bg); }
+  .letters button.off { opacity: 0.32; cursor: default; }
+  .index { flex: 1; overflow-y: auto; padding: 12px 20px 22px; columns: 2; column-gap: 26px; }
+  .block { break-inside: avoid; margin-bottom: 16px; }
+  .block h5 {
+    font-family: var(--serif); font-size: 17px; color: var(--letter); font-weight: 600;
+    padding-bottom: 4px; border-bottom: 1px solid var(--rail-border); margin-bottom: 4px;
+  }
+  .block.lit h5 { color: var(--terracotta); }
+  .row {
+    width: 100%; text-align: left; border: 0; background: transparent; cursor: pointer;
+    display: flex; align-items: baseline; gap: 8px; padding: 5px 7px; border-radius: 7px;
+    font-family: inherit; color: var(--body); font-size: 13px;
+  }
+  .row:hover { background: var(--hover); }
+  .row.on { background: var(--badge-bg); }
+  .row .name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .row.group .name { font-weight: 600; color: var(--headline); }
+  .row.solo .name { color: var(--secondary); }
+  .row .cnt {
+    font-family: var(--mono); font-size: 10px; font-weight: 600; color: var(--terracotta);
+    background: var(--chip); border-radius: 999px; padding: 2px 7px; flex-shrink: 0;
+  }
+  .row .date { font-family: var(--mono); font-size: 10px; color: var(--faint); flex-shrink: 0; }
+  .dir-panel {
+    width: 292px; flex-shrink: 0; border-left: 1px solid var(--rail-border);
+    background: var(--paper-bright); display: flex; flex-direction: column;
+  }
+  .panel-head { padding: 16px 18px 12px; border-bottom: 1px solid var(--hairline); }
+  .panel-head .kicker { font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--rust); }
+  .panel-head h5 { font-family: var(--serif); font-size: 21px; color: var(--headline); margin: 5px 0 2px; font-weight: 600; }
+  .panel-head .sub { font-family: var(--mono); font-size: 10.5px; color: var(--muted); letter-spacing: 0.06em; }
+  .panel-list { flex: 1; overflow-y: auto; padding: 8px 10px 16px; }
+  .panel-row { display: flex; gap: 9px; align-items: flex-start; padding: 9px 8px; border-radius: 8px; font-size: 12.5px; color: var(--body); }
+  .panel-row:hover { background: var(--hover); }
+  .dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; margin-top: 6px; }
+  .dot.answered { background: var(--rust); }
+  .dot.ongoing { background: var(--study-border); }
+  .dot.incomplete { background: var(--border); }
+  .panel-empty { padding: 46px 22px; text-align: center; color: var(--faint); font-size: 12.5px; }
+
+  /* ===== Demo 2: paper note page ===== */
+  .paper-page { height: 724px; overflow-y: auto; background: var(--paper); }
+  .page-head { padding: 24px 30px 0; }
+  .group-line { font-family: var(--mono); font-size: 11px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--rust); }
+  .page-head h4 {
+    font-family: var(--serif); font-size: clamp(26px, 3.6vw, 40px); font-weight: 600;
+    color: var(--ink); letter-spacing: -0.01em; line-height: 1.06; margin: 10px 0 0; max-width: 22ch;
+  }
+  .page-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 18px; }
+  .seg { display: inline-flex; gap: 2px; padding: 3px; background: var(--track); border-radius: 999px; }
+  .seg button {
+    border: 0; background: transparent; cursor: pointer; font-family: inherit;
+    font-size: 12.5px; font-weight: 600; color: var(--muted); padding: 6px 16px; border-radius: 999px;
+  }
+  .seg button.on { background: var(--rust); color: var(--paper-bright); }
+  .meta-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(184px, 1fr)); gap: 12px; padding: 20px 30px 4px; }
+  .meta-cell { background: var(--paper-bright); border: 1px solid var(--hairline); border-radius: 12px; padding: 12px 14px; }
+  .meta-cell .h { display: flex; justify-content: space-between; align-items: center; }
+  .meta-cell .h .c { font-family: var(--mono); font-size: 10px; color: var(--faint); }
+  .meta-cell .bodyline { margin-top: 9px; font-size: 12.5px; color: var(--secondary); }
+  .tagrow { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 9px; }
+  .tagrow .chip { font-size: 11px; padding: 3px 9px; }
+  .src { display: flex; gap: 8px; font-size: 12px; color: var(--secondary); padding: 4px 0; border-radius: 6px; transition: background .2s; }
+  .src .num { font-family: var(--mono); font-size: 10px; color: var(--rust); padding-top: 2px; }
+  .src.flash { background: var(--badge-bg); }
+  .thumbs { display: flex; gap: 6px; margin-top: 9px; }
+  .thumbs span { width: 38px; height: 30px; border-radius: 5px; background: #191512; display: block; overflow: hidden; }
+
+  .note-area { display: flex; gap: 0; padding: 20px 30px 34px; align-items: flex-start; }
+  .toc { width: 226px; flex-shrink: 0; padding-right: 18px; border-right: 1px solid var(--hairline); }
+  .toc-row {
+    display: flex; gap: 9px; align-items: baseline; width: 100%; text-align: left;
+    border: 0; background: transparent; cursor: pointer; font-family: inherit;
+    padding: 8px 9px; border-radius: 8px; color: var(--secondary); font-size: 13px;
+  }
+  .toc-row:hover { background: var(--hover); }
+  .toc-row.on { background: var(--chip); color: var(--ink); }
+  .toc-row .idx { font-family: var(--mono); font-size: 10px; color: var(--faint); }
+  .toc-row.on .idx { color: var(--rust); }
+  .toc-row .ttl { flex: 1; }
+  .toc-row .badge {
+    font-family: var(--mono); font-size: 9.5px; font-weight: 600; color: var(--terracotta);
+    background: var(--badge-bg); border-radius: 999px; padding: 1px 6px;
+  }
+  .study-panel { margin-top: 14px; padding: 12px; border-radius: 10px; background: var(--study); border: 1px solid var(--study-border); }
+  .study-panel .ttl { font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--rust); }
+  .study-panel .stat { font-size: 11.5px; color: var(--secondary); margin: 7px 0 10px; }
+  .canvas {
+    flex: 1; min-width: 0; margin-left: 18px; background: var(--paper-bright);
+    border: 1px solid var(--hairline); border-radius: 14px; padding: 26px 30px 30px;
+  }
+  .canvas h5 { font-family: var(--serif); font-size: 24px; color: var(--ink); font-weight: 600; margin-bottom: 12px; }
+  .canvas p { font-family: var(--serif); font-size: 17px; line-height: 1.7; color: var(--body); margin-bottom: 13px; }
+  .canvas p:last-child { margin-bottom: 0; }
+  .cite {
+    font-family: var(--mono); font-size: 10px; color: var(--rust); vertical-align: super;
+    cursor: pointer; padding: 0 1px;
+  }
+  .cite:hover { color: var(--rust-deep); }
+  .hid { border-radius: 3px; transition: background .12s, color .12s; }
+  .studying .hid {
+    background: var(--study); color: transparent; cursor: pointer;
+    box-shadow: inset 0 0 0 1px var(--study-border);
+  }
+  .studying .hid .cite { color: transparent; }
+  .studying .hid.shown { background: var(--badge-bg); color: var(--body); box-shadow: none; }
+  .studying .hid.shown .cite { color: var(--rust); }
+
+  /* ===== Demo 3: iPhone ===== */
+  .phone-stage { display: flex; flex-wrap: wrap; gap: 40px; align-items: center; justify-content: center; }
+  .phone {
+    width: 320px; flex-shrink: 0; background: #17140F; border-radius: 46px; padding: 10px;
+    box-shadow: 0 22px 54px rgba(60,45,20,0.26), inset 0 0 0 2px #3A332A;
+  }
+  .phone-screen {
+    background: var(--paper); border-radius: 37px; overflow: hidden; position: relative;
+    height: 596px; display: flex; flex-direction: column;
+  }
+  .island { position: absolute; top: 9px; left: 50%; transform: translateX(-50%); width: 92px; height: 25px; background: #000; border-radius: 13px; z-index: 10; }
+  .statusbar { height: 42px; flex-shrink: 0; display: flex; align-items: flex-end; justify-content: space-between; padding: 0 24px 2px; font-size: 12px; font-weight: 600; color: var(--ink); }
+  .p-bar { display: flex; align-items: center; gap: 8px; padding: 6px 16px 10px; border-bottom: 1px solid var(--hairline); }
+  .p-bar .back { border: 0; background: transparent; cursor: pointer; font-family: inherit; color: var(--rust); font-size: 15px; padding: 2px 4px; }
+  .p-bar .spacer { flex: 1; }
+  .p-bar .act { font-size: 11.5px; font-weight: 600; color: var(--secondary); border: 1px solid var(--border); background: var(--paper-bright); border-radius: 999px; padding: 4px 11px; cursor: pointer; font-family: inherit; }
+  .p-body { flex: 1; overflow-y: auto; padding: 14px 16px 22px; }
+  .p-body h4 { font-family: var(--serif); font-size: 24px; line-height: 1.12; color: var(--ink); font-weight: 600; margin: 8px 0 0; }
+  .p-card { background: var(--paper-bright); border: 1px solid var(--hairline); border-radius: 12px; padding: 12px 13px; margin-top: 12px; }
+  .p-card .h { display: flex; flex-wrap: wrap; gap: 6px; justify-content: space-between; align-items: center; }
+  .outline-row {
+    display: flex; gap: 9px; align-items: baseline; width: 100%; text-align: left; border: 0;
+    background: transparent; font-family: inherit; cursor: pointer; padding: 10px 6px;
+    border-radius: 8px; border-top: 1px solid var(--hairline); font-size: 13.5px; color: var(--body);
+  }
+  .outline-row:first-of-type { border-top: 0; }
+  .outline-row:hover { background: var(--hover); }
+  .outline-row .idx { font-family: var(--mono); font-size: 10px; color: var(--faint); }
+  .outline-row .ttl { flex: 1; }
+  .outline-row .cn { font-family: var(--mono); font-size: 9.5px; color: var(--terracotta); background: var(--badge-bg); border-radius: 999px; padding: 1px 6px; }
+  .ro-badge {
+    display: inline-flex; align-items: center; gap: 6px; font-size: 10.5px; font-weight: 600;
+    white-space: nowrap; color: var(--muted); background: var(--chip);
+    border-radius: 999px; padding: 4px 10px;
+  }
+  .progress { height: 4px; border-radius: 999px; background: var(--track); overflow: hidden; margin-top: 10px; }
+  .progress i { display: block; height: 100%; background: var(--rust); border-radius: 999px; }
+  .reader {
+    position: absolute; inset: 0; background: var(--paper-bright); display: flex; flex-direction: column;
+    transform: translateX(100%); transition: transform .28s cubic-bezier(.32,.72,0,1); z-index: 8;
+  }
+  .reader.open { transform: translateX(0); }
+  .reader .r-body { flex: 1; overflow-y: auto; padding: 16px 18px 26px; }
+  .reader .r-body p { font-family: var(--serif); font-size: 17px; line-height: 1.68; color: var(--body); margin-bottom: 12px; }
+  .reader .r-body h5 { font-family: var(--serif); font-size: 21px; color: var(--ink); font-weight: 600; margin-bottom: 10px; }
+
+  .phone-copy { flex: 1 1 300px; max-width: 420px; }
+  .phone-copy h3 { font-size: 28px; letter-spacing: -0.01em; margin: 8px 0 10px; }
+  .phone-copy p { color: var(--secondary); font-size: 15px; }
+  .phone-copy ul { list-style: none; margin-top: 16px; }
+  .phone-copy li { display: flex; gap: 10px; font-size: 14px; padding: 8px 0; border-top: 1px solid var(--hairline); }
+  .phone-copy li .k { color: var(--rust); font-family: var(--mono); font-size: 11px; padding-top: 3px; }
+
+  /* ===== Sticky notes strip ===== */
+  .notes-row { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); margin-top: 28px; }
+  .sticky { border-radius: 12px; padding: 16px 17px 18px; border: 1px solid var(--border); }
+  .sticky.plain { background: var(--paper-bright); border-color: #D8CFBE; }
+  .sticky.sand  { background: var(--sand);  border-color: #E0C9A6; }
+  .sticky.clay  { background: var(--clay);  border-color: #E2BCA4; }
+  .sticky.sage  { background: var(--sage);  border-color: #CBD1B8; }
+  .sticky .t { font-family: var(--serif); font-size: 17px; color: var(--ink); font-weight: 600; line-height: 1.25; }
+  .sticky .b { font-family: var(--serif); font-size: 14px; color: var(--body); margin-top: 7px; line-height: 1.55; }
+  .sticky .f { font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-top: 12px; }
+
+  /* ===== Privacy ===== */
+  .privacy { text-align: center; padding: 68px 0; }
+  .privacy h2 { font-size: clamp(26px, 4vw, 36px); margin-top: 12px; }
+  .privacy p { max-width: 64ch; margin: 14px auto 0; color: var(--secondary); font-size: 16px; }
+  .privacy .marks { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 24px; }
+  .privacy .marks span { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--secondary); background: var(--paper-bright); border: 1px solid var(--hairline); border-radius: 999px; padding: 7px 15px; }
+
+  /* ===== Footer ===== */
+  footer { border-top: 1px solid var(--hairline); background: var(--paper-warm); }
+  .foot-inner { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; justify-content: space-between; padding: 26px 22px; max-width: 1120px; margin: 0 auto; }
+  .foot-inner span { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; color: var(--muted); text-transform: uppercase; }
+  .foot-inner nav { display: flex; gap: 18px; font-size: 13.5px; }
+  .foot-inner nav a { color: var(--secondary); }
+
+  /* ===== Responsive ===== */
+  @media (max-width: 900px) {
+    .dir-panel { display: none; }
+    .index { columns: 1; }
+    .note-area { flex-direction: column; }
+    .toc { width: 100%; border-right: 0; border-bottom: 1px solid var(--hairline); padding-right: 0; padding-bottom: 14px; }
+    .canvas { margin-left: 0; margin-top: 16px; width: 100%; }
+  }
+  @media (max-width: 640px) {
+    .hero { padding-top: 52px; }
+    .dir { height: 440px; }
+    .paper-page { height: 560px; }
+    .page-head, .meta-strip, .note-area { padding-left: 18px; padding-right: 18px; }
+    .canvas { padding: 20px 18px 22px; }
+    .nav-inner { gap: 12px; }
+    .brand { font-size: 14.5px; }
+    .nav-links { gap: 14px; font-size: 12.5px; }
+    .nav-links a.hide-sm { display: none; }
+  }
+  @media (max-width: 470px) {
+    .nav-links a.hide-xs { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="index.html">
+      <img class="glyph" src="icon.png" alt="" width="28" height="28">
+      Medical Casebook
+    </a>
+    <nav class="nav-links">
+      <a href="#inside" class="hide-xs">What's inside</a>
+      <a href="#platforms" class="hide-sm">Mac &amp; iPhone</a>
+      <a href="#demos">Try it</a>
+      <a href="privacy.html" class="hide-sm">Privacy</a>
+      <a href="support.html">Support</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero wrap">
+  <h1>A casebook for <em>everything you look&nbsp;up</em>.</h1>
+  <p class="sub">Write down the thing you need to look up. Answer it properly — real sources, numbered citations, a note written in sections. Then hide the half you want to remember and quiz yourself on it.</p>
+  <p class="meta">macOS 26.3 or later &middot; Free &middot; iCloud sync &middot; Nothing leaves your devices</p>
+  <div class="cta-row">
+    <a class="store-badge" href="https://apps.apple.com/us/app/medical-casebook/id6764286169?mt=12" aria-label="Download Medical Casebook on the Mac App Store">
+      <span class="apple">&#63743;</span>
+      <span class="lines"><small>Download on the</small><strong>Mac App Store</strong></span>
+    </a>
+    <a class="pill" href="#demos">Try the interactive demo</a>
+  </div>
+  <p class="soon">iPhone and iPad are on the way.</p>
+</section>
+
+<section id="inside" class="section band">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="overline">What's inside</p>
+      <h2>Built the way you actually learn</h2>
+      <p>A question comes up at the workstation. You write it down, find the answer later, cite what you found, and make it stick — without ever leaving one app.</p>
+    </div>
+
+    <div class="features">
+      <div class="feature">
+        <div class="n">01</div>
+        <h3>Write it down in seconds</h3>
+        <p>Get the topic down the moment it comes up, before it evaporates. Sorting it out properly can wait until you have time to do it justice.</p>
+      </div>
+      <div class="feature">
+        <div class="n">02</div>
+        <h3>Groups, and an A&ndash;Z index</h3>
+        <p>Topics nest under groups you name yourself. The Mac opens them as a proper index — one you can scan, search, and jump through by letter.</p>
+      </div>
+      <div class="feature">
+        <div class="n">03</div>
+        <h3>Tag it four ways</h3>
+        <p>Specialty, Anatomy, Disease and Kind, so a topic can be found from any direction. The tag list is yours to shape as your interests change.</p>
+      </div>
+      <div class="feature">
+        <div class="n">04</div>
+        <h3>Sources, properly cited</h3>
+        <p>Add a source by DOI, by link, or by scanning a book. Drop numbered citations into your note and they keep themselves in order as you write.</p>
+      </div>
+      <div class="feature">
+        <div class="n">05</div>
+        <h3>Notes written in sections</h3>
+        <p>Answer the topic as named sections in a table of contents, so a long note is still something you can navigate a year from now.</p>
+      </div>
+      <div class="feature">
+        <div class="n">06</div>
+        <h3>Study Mode</h3>
+        <p>Hide the phrases you want to remember, then reveal them one at a time. Your own notes become the quiz — no second app, no flashcards to make.</p>
+      </div>
+      <div class="feature">
+        <div class="n">07</div>
+        <h3>Images kept with the topic</h3>
+        <p>Keep the images that make the point alongside the topic they belong to, mark up what matters, and star the best ones into one browsable collection.</p>
+      </div>
+      <div class="feature">
+        <div class="n">08</div>
+        <h3>Export and share</h3>
+        <p>Any topic prints as a clean, typeset document with its sources listed at the end — ready to send on, archive, or read on paper.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="platforms" class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="overline">One casebook, two jobs</p>
+      <h2>Write at the desk. Review anywhere.</h2>
+      <p>The split is deliberate. Working an answer out — sections, citations, marking up images — belongs on a big screen with a keyboard. Going back over it later does not.</p>
+    </div>
+
+    <div class="split">
+      <div class="plat mac">
+        <p class="overline rust">macOS &middot; Available now</p>
+        <h3>The writing desk</h3>
+        <p class="role">Where a topic becomes an answer you would be happy to hand to a colleague.</p>
+        <ul>
+          <li><span class="k">01</span><span>The whole topic on one page — note, sources, tags and images side by side</span></li>
+          <li><span class="k">02</span><span>Write in named sections you can rename and reorder as the answer grows</span></li>
+          <li><span class="k">03</span><span>Headings, lists, highlighting and find-in-note, with citations that renumber themselves</span></li>
+          <li><span class="k">04</span><span>Mark the phrases you want to remember, for Study Mode</span></li>
+          <li><span class="k">05</span><span>Quick notes you can jot now and file onto a topic later</span></li>
+          <li><span class="k">06</span><span>Add images and mark up what matters on them</span></li>
+          <li><span class="k">07</span><span>The A&ndash;Z index, the dashboard, and export to PDF</span></li>
+        </ul>
+      </div>
+
+      <div class="plat">
+        <p class="overline rust">iPhone &amp; iPad <span class="tag-soon">Coming soon</span></p>
+        <h3>The pocket copy</h3>
+        <p class="role">Built for reviewing on the go — going back over what you worked out, rather than working it out again.</p>
+        <ul>
+          <li><span class="k">01</span><span>Read your notes section by section, with search and tappable citations</span></li>
+          <li><span class="k">02</span><span>Quiz yourself with Study Mode between cases</span></li>
+          <li><span class="k">03</span><span>Read back your quick notes and search across them</span></li>
+          <li><span class="k">04</span><span>Browse your images and swipe straight through a case</span></li>
+          <li><span class="k">05</span><span>Catch a new topic before you forget it</span></li>
+          <li><span class="k">06</span><span>Add a source on the spot — by DOI, by link, or by scanning a book</span></li>
+        </ul>
+        <p class="note"><b>The phone is for reviewing, not writing.</b> Notes open there to be read rather than edited — which is the point. Sitting down to write is a desk job; remembering what you wrote is not.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="demos" class="band">
+  <div class="wrap section" style="padding-bottom:0">
+    <div class="section-head" style="margin-bottom:8px">
+      <p class="overline">Try it right here</p>
+      <h2>The real thing, in a browser</h2>
+      <p>These three are live — click the groups, switch sections, turn Study Mode on and quiz yourself.</p>
+    </div>
+  </div>
+
+  <div class="wrap">
+
+    <!-- ============ DEMO 1: Topics directory (macOS) ============ -->
+    <div class="demo">
+      <div class="demo-head">
+        <div class="copy">
+          <p class="overline rust">macOS &middot; Topics</p>
+          <h3>An index, not a feed</h3>
+          <p>Groups and solo topics interleave in one packed A&ndash;Z index. Click a letter to jump; click a group to pin it in the panel, where you can rename it and work through its topics.</p>
+          <div class="hint">Click a <b>letter</b>, then click any <b>group</b> row.</div>
+        </div>
+      </div>
+
+      <div class="mac-window">
+        <div class="titlebar">
+          <div class="lights"><i class="r"></i><i class="y"></i><i class="g"></i></div>
+          <div class="t">Topics</div>
+        </div>
+        <div class="dir">
+          <div class="dir-main">
+            <div class="dir-head">
+              <div class="count" id="dirCount">10 groups &middot; 5 solo topics</div>
+              <h4>Topics</h4>
+              <div class="tabs" id="statusTabs">
+                <button class="on">All</button><button>Incomplete</button><button>Ongoing</button><button>Answered</button>
+              </div>
+            </div>
+            <div class="letters" id="letterStrip"></div>
+            <div class="index" id="dirIndex"></div>
+          </div>
+          <aside class="dir-panel">
+            <div id="panelContent">
+              <div class="panel-empty">Click a group to pin it here.</div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ DEMO 2: Paper note page (macOS) ============ -->
+    <div class="demo">
+      <div class="demo-head">
+        <div class="copy">
+          <p class="overline rust">macOS &middot; Topic details</p>
+          <h3>The page, and the half you're hiding</h3>
+          <p>The note lives beside its section rail. Turn on Study Mode and every phrase you marked disappears under a warm fill — click one to bring it back, one at a time, the way flashcards should work.</p>
+          <div class="hint">Switch <b>sections</b>, hit <b>Study Mode</b>, then click a concealed phrase &mdash; or a citation.</div>
+        </div>
+      </div>
+
+      <div class="mac-window">
+        <div class="titlebar">
+          <div class="lights"><i class="r"></i><i class="y"></i><i class="g"></i></div>
+          <div class="t">Topic Details</div>
+        </div>
+        <div class="paper-page">
+          <div class="page-head">
+            <div class="group-line">Vasculitis &middot; Large-vessel</div>
+            <h4>How is giant cell arteritis worked up on imaging?</h4>
+            <div class="page-actions">
+              <div class="seg" id="noteStatus">
+                <button>Incomplete</button><button>Ongoing</button><button class="on">Answered</button>
+              </div>
+              <button class="pill">Share</button>
+              <button class="pill">Duplicate</button>
+              <button class="pill">Find in note</button>
+            </div>
+          </div>
+
+          <div class="meta-strip">
+            <div class="meta-cell">
+              <div class="h"><span class="overline">Tags</span><span class="c">4</span></div>
+              <div class="tagrow">
+                <span class="chip">Cardiothoracic</span><span class="chip">Aorta</span>
+                <span class="chip">Vasculitis</span><span class="chip">Imaging Findings</span>
+              </div>
+            </div>
+            <div class="meta-cell">
+              <div class="h"><span class="overline">Sources</span><span class="c">2</span></div>
+              <div class="src" id="src1"><span class="num">[1]</span><span>Dejaco C, et al. EULAR recommendations for imaging in large-vessel vasculitis. <i>Ann Rheum Dis</i>.</span></div>
+              <div class="src" id="src2"><span class="num">[2]</span><span>Schmidt WA. Ultrasound in the diagnosis of giant cell arteritis. <i>Rheumatology</i>.</span></div>
+            </div>
+            <div class="meta-cell">
+              <div class="h"><span class="overline">Case Images</span><span class="c">6</span></div>
+              <div class="thumbs">
+                <span><svg viewBox="0 0 76 60" preserveAspectRatio="none"><rect width="76" height="60" fill="#12100E"/><circle cx="38" cy="30" r="15" fill="none" stroke="#8E8E93" stroke-width="5"/><circle cx="38" cy="30" r="6" fill="#1C1C1E"/></svg></span>
+                <span><svg viewBox="0 0 76 60" preserveAspectRatio="none"><rect width="76" height="60" fill="#0A0A0A"/><ellipse cx="38" cy="30" rx="26" ry="24" fill="#2C2C2E"/><ellipse cx="38" cy="30" rx="9" ry="8" fill="#5EEAD4" opacity=".5"/></svg></span>
+                <span><svg viewBox="0 0 76 60" preserveAspectRatio="none"><rect width="76" height="60" fill="#0C0C0C"/><path d="M12 8 Q38 2 64 8 L60 54 Q38 58 16 54 Z" fill="#3A3A3C"/><path d="M32 12 L34 52" stroke="#F7B231" stroke-width="3"/></svg></span>
+                <span><svg viewBox="0 0 76 60" preserveAspectRatio="none"><rect width="76" height="60" fill="#000"/><path d="M38 4 L70 52 Q38 62 6 52 Z" fill="#1C1C1E"/><circle cx="38" cy="34" r="11" fill="none" stroke="#AEAEB2" stroke-width="3"/></svg></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="note-area">
+            <div class="toc">
+              <div class="overline" style="padding:0 9px 8px">Synthesis Note</div>
+              <div id="tocRows"></div>
+              <div class="study-panel">
+                <div class="ttl">Study Mode</div>
+                <div class="stat" id="studyStat">9 phrases hidden across 4 sections</div>
+                <button class="pill" id="studyToggle" style="width:100%;justify-content:center">Turn on</button>
+              </div>
+            </div>
+            <div class="canvas" id="noteCanvas"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ DEMO 3: iPhone reader ============ -->
+    <div class="demo">
+      <div class="phone-stage">
+        <div class="phone">
+          <div class="phone-screen">
+            <div class="island"></div>
+            <div class="statusbar"><span>9:41</span><span>&#9679;&#9679;&#9679;&#9679; &#9889;</span></div>
+            <div class="p-bar">
+              <button class="back">&#8249; Topics</button>
+              <span class="spacer"></span>
+              <button class="act">Share</button>
+              <button class="act">Study</button>
+            </div>
+            <div class="p-body">
+              <div class="group-line">Vasculitis &middot; Large-vessel</div>
+              <h4>How is giant cell arteritis worked up on imaging?</h4>
+              <div class="tagrow" style="margin-top:12px">
+                <span class="chip" style="font-size:11px;padding:3px 9px">Cardiothoracic</span>
+                <span class="chip" style="font-size:11px;padding:3px 9px">Aorta</span>
+                <span class="chip" style="font-size:11px;padding:3px 9px">Vasculitis</span>
+              </div>
+
+              <div class="p-card">
+                <div class="h"><span class="overline">Study progress</span><span class="c" style="font-family:var(--mono);font-size:10px;color:var(--faint)">3 / 9</span></div>
+                <div class="progress"><i style="width:33%"></i></div>
+              </div>
+
+              <div class="p-card">
+                <div class="h" style="margin-bottom:6px">
+                  <span class="overline">Synthesis Note</span>
+                  <span class="ro-badge">Read-only &middot; edit on Mac</span>
+                </div>
+                <div id="phoneOutline"></div>
+              </div>
+
+              <div class="p-card">
+                <div class="h"><span class="overline">Sources</span><span class="c" style="font-family:var(--mono);font-size:10px;color:var(--faint)">2</span></div>
+                <div class="bodyline">Add a DOI or URL, or scan a book's ISBN with the camera.</div>
+                <button class="pill" style="margin-top:10px">Scan ISBN</button>
+              </div>
+            </div>
+
+            <div class="reader" id="phoneReader">
+              <div class="p-bar">
+                <button class="back" id="readerBack">&#8249; Note</button>
+                <span class="spacer"></span>
+                <button class="act">Find in note</button>
+              </div>
+              <div class="r-body" id="readerBody"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="phone-copy">
+          <p class="overline rust">iPhone &amp; iPad <span class="tag-soon">Coming soon</span></p>
+          <h3>The note, in your pocket</h3>
+          <p>The phone opens a note as an outline and remembers where you stopped reading. Tap a section to read it full-width in the same serif you wrote it in.</p>
+          <ul>
+            <li><span class="k">&rarr;</span><span>Tap a section to open the reader; tap back to return to the outline</span></li>
+            <li><span class="k">&rarr;</span><span>Citations stay tappable, sources stay one tap away</span></li>
+            <li><span class="k">&rarr;</span><span>Study Mode travels with the note, and the progress bar comes with it</span></li>
+            <li><span class="k">&rarr;</span><span>Swipe through a case's images without leaving the page</span></li>
+          </ul>
+          <div class="hint">Tap a <b>section</b> in the outline.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ Sticky notes strip ============ -->
+    <div class="demo">
+      <div class="demo-head">
+        <div class="copy">
+          <p class="overline rust">Quick notes</p>
+          <h3>Jot it now, file it later</h3>
+          <p>Not everything arrives as a tidy question. Quick notes are a place to put the half-formed thought, the reference someone mentioned, the thing to look up — and file it onto a topic once you know where it belongs.</p>
+        </div>
+      </div>
+      <div class="notes-row">
+        <div class="sticky plain">
+          <div class="t">Halo sign cut-offs</div>
+          <div class="b">Temporal ≥0.4 mm, axillary ≥1.0 mm. The halo persists under probe compression.</div>
+          <div class="f">Filed to Vasculitis</div>
+        </div>
+        <div class="sticky sand">
+          <div class="t">Chapter to read</div>
+          <div class="b">Large-vessel vasculitis chapter someone recommended at conference — added as a source.</div>
+          <div class="f">Filed &middot; 1 source added</div>
+        </div>
+        <div class="sticky clay">
+          <div class="t">Three things to look up</div>
+          <div class="b">Each one became its own follow up, attached back to the note that raised it.</div>
+          <div class="f">3 follow ups</div>
+        </div>
+        <div class="sticky sage">
+          <div class="t">Unfiled</div>
+          <div class="b">Notes sit here until you file them. Nothing is lost, and nothing gets filed by accident.</div>
+          <div class="f">Awaiting filing</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="height:40px"></div>
+  </div>
+</section>
+
+<section class="privacy wrap">
+  <p class="overline">Private by construction</p>
+  <h2>There is no server to leak</h2>
+  <p>Medical Casebook has no accounts, no analytics and no backend. Your topics, notes and images live on your own devices and sync through your private iCloud — which means there is nothing for anyone else to see, including us.</p>
+  <div class="privacy marks">
+    <span>No accounts</span><span>No analytics</span><span>No servers</span>
+    <span>Works offline</span><span>Your iCloud only</span>
+  </div>
+  <p style="margin-top:22px"><a href="privacy.html">Read the privacy policy</a></p>
+</section>
+
+<footer>
+  <div class="foot-inner">
+    <span>&copy; 2026 Medical Casebook &middot; v2.7.1</span>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="https://apps.apple.com/us/app/medical-casebook/id6764286169?mt=12">Mac App Store</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="support.html">Support</a>
+      <a href="mailto:proceduralist@outlook.com">Contact</a>
+    </nav>
+  </div>
+</footer>
+
+<script>
+(function () {
+  "use strict";
+
+  function el(tag, cls, html) {
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (html != null) n.innerHTML = html;
+    return n;
+  }
+  function esc(s) {
+    return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+
+  /* =====================================================================
+     DEMO 1 — Topics directory
+     ===================================================================== */
+
+  var groups = [
+    { name: "Adrenal Lesions", topics: [
+      ["Washout thresholds on adrenal protocol CT", "answered"],
+      ["When is chemical-shift MRI enough?", "answered"],
+      ["Indeterminate nodule in a known malignancy", "ongoing"],
+      ["Adrenal haemorrhage vs. metastasis", "incomplete"] ] },
+    { name: "Aortic Emergencies", topics: [
+      ["Intramural haematoma — when does it need surgery?", "answered"],
+      ["Penetrating atherosclerotic ulcer follow-up", "ongoing"],
+      ["ECG-gating: when does it change management?", "ongoing"],
+      ["Type B dissection: high-risk features", "answered"],
+      ["Traumatic aortic injury grading", "incomplete"],
+      ["Post-TEVAR endoleak classification", "incomplete"],
+      ["Mycotic aneurysm on CTA", "incomplete"] ] },
+    { name: "Cardiac MRI", topics: [
+      ["Late gadolinium patterns by aetiology", "answered"],
+      ["T1 and T2 mapping — what the numbers mean", "ongoing"],
+      ["Amyloid: the nulling trick", "answered"],
+      ["Stress perfusion contraindications", "incomplete"],
+      ["Arrhythmogenic cardiomyopathy criteria", "incomplete"] ] },
+    { name: "Demyelinating Disease", topics: [
+      ["McDonald criteria, plainly", "answered"],
+      ["MOGAD vs. NMOSD vs. MS on MRI", "ongoing"],
+      ["Tumefactive demyelination pitfalls", "ongoing"],
+      ["Central vein sign — does it help?", "incomplete"],
+      ["PML in the treated patient", "incomplete"],
+      ["Spinal cord lesion length as a discriminator", "answered"] ] },
+    { name: "Hepatic Lesions", topics: [
+      ["LI-RADS 3 vs. 4 in practice", "answered"],
+      ["Hepatobiliary phase: what is truly hypointense", "answered"],
+      ["FNH vs. adenoma — the subtypes that matter", "ongoing"],
+      ["Peripheral washout and its company", "ongoing"],
+      ["Transient hepatic attenuation differences", "incomplete"],
+      ["Hepatic abscess mimics", "incomplete"],
+      ["Post-ablation follow-up intervals", "incomplete"],
+      ["Fat-containing lesions, sorted", "answered"],
+      ["Cirrhotic nodule progression", "incomplete"] ] },
+    { name: "Interstitial Lung Disease", topics: [
+      ["UIP: the four-tier scheme", "answered"],
+      ["Fibrotic hypersensitivity pneumonitis clues", "ongoing"],
+      ["Where traction bronchiectasis changes the call", "ongoing"],
+      ["Progressive pulmonary fibrosis, defined", "incomplete"],
+      ["Drug toxicity patterns worth knowing", "incomplete"],
+      ["Connective-tissue disease ILD: the tells", "answered"],
+      ["Combined fibrosis and emphysema", "incomplete"],
+      ["When to recommend a multidisciplinary discussion", "answered"] ] },
+    { name: "Pediatric Chest", topics: [
+      ["Congenital lung malformations, current naming", "answered"],
+      ["Round pneumonia vs. mass", "ongoing"],
+      ["Thymus: normal, or not", "incomplete"] ] },
+    { name: "Pulmonary Embolism", topics: [
+      ["RV:LV ratio and what it predicts", "answered"],
+      ["Subsegmental PE — treat or not?", "ongoing"],
+      ["Chronic thromboembolic disease signs", "ongoing"],
+      ["Dual-energy iodine maps in practice", "incomplete"],
+      ["Pregnancy: the imaging pathway", "answered"],
+      ["Artefact vs. clot at the hilum", "incomplete"] ] },
+    { name: "Thyroid Imaging", topics: [
+      ["TI-RADS: where it disagrees with ATA", "answered"],
+      ["Tc-99m pertechnetate vs. I-123", "answered"],
+      ["Cold nodule — what happens next", "ongoing"],
+      ["Post-thyroidectomy neck ultrasound", "incomplete"],
+      ["Substernal goitre: the CT questions", "incomplete"] ] },
+    { name: "Vasculitis", topics: [
+      ["How is giant cell arteritis worked up on imaging?", "answered"],
+      ["Takayasu: the angiographic types", "answered"],
+      ["Halo sign cut-offs, temporal vs. axillary", "answered"],
+      ["FDG-PET before steroids — how long is the window?", "ongoing"],
+      ["Large-vessel vasculitis vs. atherosclerosis", "answered"],
+      ["IgG4-related periaortitis", "ongoing"],
+      ["ANCA-associated disease in the chest", "ongoing"],
+      ["Behçet and pulmonary artery aneurysms", "incomplete"],
+      ["Vessel wall MRI: black-blood basics", "incomplete"],
+      ["Relapse on imaging vs. relapse in clinic", "incomplete"],
+      ["Paediatric large-vessel vasculitis", "incomplete"] ] }
+  ];
+
+  var solos = [
+    { name: "Bosniak 2F — what is the follow-up interval?", date: "Mar 4" },
+    { name: "Does contrast actually affect eGFR in AKI?", date: "Feb 18" },
+    { name: "Incidental splenic lesion: when to care", date: "Jan 29" },
+    { name: "Ovarian-Adnexal RADS in postmenopause", date: "Jan 12" },
+    { name: "Why does DWI go bright in an abscess?", date: "Dec 3" }
+  ];
+
+  var dirIndex = document.getElementById("dirIndex");
+  var letterStrip = document.getElementById("letterStrip");
+  var panelContent = document.getElementById("panelContent");
+  var ALPHA = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+
+  var blocks = {};
+  groups.forEach(function (g) {
+    var L = g.name[0].toUpperCase();
+    (blocks[L] = blocks[L] || []).push({ kind: "group", data: g });
+  });
+  solos.forEach(function (s) {
+    var L = s.name[0].toUpperCase();
+    (blocks[L] = blocks[L] || []).push({ kind: "solo", data: s });
+  });
+
+  document.getElementById("dirCount").innerHTML =
+    groups.length + " groups &middot; " + solos.length + " solo topics";
+
+  ALPHA.forEach(function (L) {
+    var b = el("button", blocks[L] ? "" : "off", L);
+    if (blocks[L]) {
+      b.addEventListener("click", function () { selectLetter(L, b); });
+    } else {
+      b.disabled = true;
+    }
+    letterStrip.appendChild(b);
+  });
+
+  function selectLetter(L, btn) {
+    Array.prototype.forEach.call(letterStrip.children, function (c) { c.classList.remove("on"); });
+    btn.classList.add("on");
+    Array.prototype.forEach.call(dirIndex.children, function (c) { c.classList.remove("lit"); });
+    var target = document.getElementById("blk-" + L);
+    if (target) {
+      target.classList.add("lit");
+      dirIndex.scrollTop = target.offsetTop - dirIndex.offsetTop - 8;
+    }
+  }
+
+  var activeRow = null;
+
+  function renderIndex() {
+    dirIndex.innerHTML = "";
+    ALPHA.forEach(function (L) {
+      if (!blocks[L]) return;
+      var blk = el("div", "block");
+      blk.id = "blk-" + L;
+      blk.appendChild(el("h5", null, L));
+      blocks[L].forEach(function (entry) {
+        var row;
+        if (entry.kind === "group") {
+          row = el("button", "row group",
+            '<span class="name">' + esc(entry.data.name) + '</span>' +
+            '<span class="cnt">' + entry.data.topics.length + '</span>');
+          row.addEventListener("click", function () {
+            if (activeRow) activeRow.classList.remove("on");
+            row.classList.add("on");
+            activeRow = row;
+            showGroup(entry.data);
+          });
+        } else {
+          row = el("button", "row solo",
+            '<span class="name">' + esc(entry.data.name) + '</span>' +
+            '<span class="date">' + esc(entry.data.date) + '</span>');
+          row.addEventListener("click", function () {
+            if (activeRow) activeRow.classList.remove("on");
+            row.classList.add("on");
+            activeRow = row;
+            showSolo(entry.data);
+          });
+        }
+        blk.appendChild(row);
+      });
+      dirIndex.appendChild(blk);
+    });
+  }
+
+  function showGroup(g) {
+    var answered = g.topics.filter(function (t) { return t[1] === "answered"; }).length;
+    var head = el("div", "panel-head",
+      '<div class="kicker">Group</div>' +
+      '<h5>' + esc(g.name) + '</h5>' +
+      '<div class="sub">' + g.topics.length + " topics &middot; " + answered + " answered</div>");
+    var list = el("div", "panel-list");
+    g.topics.forEach(function (t) {
+      list.appendChild(el("div", "panel-row",
+        '<span class="dot ' + t[1] + '"></span><span>' + esc(t[0]) + '</span>'));
+    });
+    panelContent.innerHTML = "";
+    panelContent.appendChild(head);
+    panelContent.appendChild(list);
+  }
+
+  function showSolo(s) {
+    panelContent.innerHTML =
+      '<div class="panel-head"><div class="kicker">Solo topic</div>' +
+      '<h5>' + esc(s.name) + '</h5>' +
+      '<div class="sub">Not in a group &middot; ' + esc(s.date) + '</div></div>' +
+      '<div class="panel-empty">Nest it under a group from the topic page, and it joins that group’s block in the index.</div>';
+  }
+
+  renderIndex();
+  showGroup(groups[groups.length - 1]);
+
+  var tabs = document.getElementById("statusTabs");
+  tabs.addEventListener("click", function (e) {
+    if (e.target.tagName !== "BUTTON") return;
+    Array.prototype.forEach.call(tabs.children, function (b) { b.classList.remove("on"); });
+    e.target.classList.add("on");
+  });
+
+  /* =====================================================================
+     DEMO 2 — Paper note page with Study Mode
+     ===================================================================== */
+
+  function h(s) { return '<span class="hid">' + s + '</span>'; }
+  function c(n) { return '<span class="cite" data-src="' + n + '">' + n + '</span>'; }
+
+  var sections = [
+    {
+      title: "Overview",
+      hidden: 3,
+      html:
+        "<h5>Overview</h5>" +
+        "<p>Giant cell arteritis is a granulomatous large-vessel vasculitis that essentially does not occur " +
+        h("under the age of 50") + ", with a predilection for the extracranial branches of the carotid — above all the " +
+        h("superficial temporal artery") + ".</p>" +
+        "<p>Extracranial large-vessel involvement — aorta, subclavian, axillary — is present in " +
+        h("roughly half of patients") + " at diagnosis, which is why imaging has moved from confirming a clinical diagnosis to making it" + c(1) + ".</p>"
+    },
+    {
+      title: "Imaging findings",
+      hidden: 4,
+      html:
+        "<h5>Imaging findings</h5>" +
+        "<p>On colour Doppler ultrasound the finding is the " + h("halo sign") +
+        " — homogeneous, hypoechoic, circumferential wall thickening that " + h("does not compress under the probe") + "" + c(2) + ".</p>" +
+        "<p>Reported cut-offs: a halo of " + h("≥0.4 mm in the temporal artery") + " and " +
+        h("≥1.0 mm in the axillary artery") + ". Vessel-wall MRI shows concentric mural thickening and enhancement on black-blood post-contrast sequences.</p>"
+    },
+    {
+      title: "PET and the steroid window",
+      hidden: 1,
+      html:
+        "<h5>PET and the steroid window</h5>" +
+        "<p>FDG-PET grades aortic and branch uptake against the liver, and uptake at or above liver is treated as positive. " +
+        "Its weakness is timing: uptake falls " + h("within days of starting glucocorticoids") +
+        ", so the scan is worth most before treatment — which is rarely when it gets ordered" + c(1) + ".</p>"
+    },
+    {
+      title: "Differential",
+      hidden: 1,
+      html:
+        "<h5>Differential</h5>" +
+        "<p>Takayasu arteritis in a patient under 40, favouring stenosis and occlusion over enhancement alone. " +
+        "Atherosclerosis is " + h("eccentric, calcified and clusters at branch points") +
+        ", where vasculitic thickening is smooth and circumferential. Then IgG4-related periaortitis, and infectious aortitis with a saccular aneurysm and periaortic gas or fluid.</p>"
+    }
+  ];
+
+  var tocRows = document.getElementById("tocRows");
+  var canvas = document.getElementById("noteCanvas");
+  var studyToggle = document.getElementById("studyToggle");
+  var studyStat = document.getElementById("studyStat");
+  var current = 0;
+  var studying = false;
+
+  function pad(n) { return n < 10 ? "0" + n : "" + n; }
+
+  function renderTOC() {
+    tocRows.innerHTML = "";
+    sections.forEach(function (s, i) {
+      var row = el("button", "toc-row" + (i === current ? " on" : ""),
+        '<span class="idx">' + pad(i + 1) + '</span>' +
+        '<span class="ttl">' + esc(s.title) + '</span>' +
+        (s.hidden ? '<span class="badge">' + s.hidden + '</span>' : ""));
+      row.addEventListener("click", function () { current = i; renderTOC(); renderCanvas(); });
+      tocRows.appendChild(row);
+    });
+  }
+
+  function renderCanvas() {
+    canvas.innerHTML = sections[current].html;
+    canvas.className = "canvas" + (studying ? " studying" : "");
+    canvas.querySelectorAll(".hid").forEach(function (span) {
+      span.addEventListener("click", function (e) {
+        if (!studying) return;
+        e.stopPropagation();
+        span.classList.add("shown");   // reveal is one-way, as in the app
+      });
+    });
+    canvas.querySelectorAll(".cite").forEach(function (pill) {
+      pill.addEventListener("click", function (e) {
+        e.stopPropagation();
+        if (studying) return;          // citation taps are suppressed while quizzing
+        var row = document.getElementById("src" + pill.dataset.src);
+        if (!row) return;
+        row.classList.add("flash");
+        setTimeout(function () { row.classList.remove("flash"); }, 900);
+      });
+    });
+  }
+
+  var totalHidden = sections.reduce(function (a, s) { return a + s.hidden; }, 0);
+  var withHidden = sections.filter(function (s) { return s.hidden > 0; }).length;
+  studyStat.innerHTML = totalHidden + " phrases hidden across " + withHidden + " sections";
+
+  studyToggle.addEventListener("click", function () {
+    studying = !studying;
+    studyToggle.textContent = studying ? "Turn off" : "Turn on";
+    studyToggle.className = studying ? "pill rust" : "pill";
+    studyToggle.style.width = "100%";
+    studyToggle.style.justifyContent = "center";
+    studyStat.innerHTML = studying
+      ? "Click a covered phrase to reveal it"
+      : totalHidden + " phrases hidden across " + withHidden + " sections";
+    renderCanvas();
+  });
+
+  renderTOC();
+  renderCanvas();
+
+  var noteStatus = document.getElementById("noteStatus");
+  noteStatus.addEventListener("click", function (e) {
+    if (e.target.tagName !== "BUTTON") return;
+    Array.prototype.forEach.call(noteStatus.children, function (b) { b.classList.remove("on"); });
+    e.target.classList.add("on");
+  });
+
+  /* =====================================================================
+     DEMO 3 — iPhone outline + reader
+     ===================================================================== */
+
+  var phoneOutline = document.getElementById("phoneOutline");
+  var reader = document.getElementById("phoneReader");
+  var readerBody = document.getElementById("readerBody");
+
+  sections.forEach(function (s, i) {
+    var row = el("button", "outline-row",
+      '<span class="idx">' + pad(i + 1) + '</span>' +
+      '<span class="ttl">' + esc(s.title) + '</span>' +
+      (s.hidden ? '<span class="cn">' + s.hidden + '</span>' : ""));
+    row.addEventListener("click", function () {
+      readerBody.innerHTML = s.html;
+      reader.classList.add("open");
+    });
+    phoneOutline.appendChild(row);
+  });
+
+  document.getElementById("readerBack").addEventListener("click", function () {
+    reader.classList.remove("open");
+  });
+})();
+</script>
+</body>
+</html>

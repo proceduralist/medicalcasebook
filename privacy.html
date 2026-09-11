@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<link rel="icon" type="image/png" href="icon.png">
+<link rel="apple-touch-icon" href="icon.png">
+<title>Privacy Policy — Medical Casebook</title>
+<meta name="description" content="Medical Casebook collects no data. No servers, no analytics, no accounts. Everything you create stays on your device and in your own private iCloud.">
+<style>
+  :root {
+    --paper: #F7F3EC; --paper-bright: #FDFBF6; --paper-warm: #F1EBDF; --bar: #FBF7EF;
+    --ink: #211D17; --headline: #2B2317; --body: #41392C; --secondary: #5C5240;
+    --muted: #877C67; --faint: #A3977F;
+    --hairline: #E4DDD0; --border: #D8CFBE; --rail-border: #E5DCC9;
+    --rust: #A3532F; --rust-deep: #8A4526; --chip: #EFE6D6;
+    --study: #F3EAD9; --study-border: #E0C9A6;
+    --serif: "New York", "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+    --sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+    --shadow-soft: 0 1px 2px rgba(60,45,20,0.05);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: var(--sans); color: var(--body); background: var(--paper);
+    -webkit-font-smoothing: antialiased; line-height: 1.6; font-size: 15px;
+  }
+  a { color: var(--rust); text-decoration: none; }
+  a:hover { color: var(--rust-deep); text-decoration: underline; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 22px; }
+
+  .nav {
+    position: sticky; top: 0; z-index: 60; background: rgba(247,243,236,0.86);
+    backdrop-filter: saturate(160%) blur(14px); -webkit-backdrop-filter: saturate(160%) blur(14px);
+    border-bottom: 1px solid var(--hairline);
+  }
+  .nav-inner { display: flex; align-items: center; gap: 20px; height: 56px; }
+  .brand { display: flex; align-items: center; gap: 10px; color: var(--ink); font-weight: 600; font-size: 16px; white-space: nowrap; }
+  .brand:hover { text-decoration: none; color: var(--ink); }
+  .glyph { width: 28px; height: 28px; border-radius: 7px; flex-shrink: 0; display: block; box-shadow: var(--shadow-soft); }
+  .nav-links { margin-left: auto; display: flex; gap: 20px; font-size: 13.5px; }
+  .nav-links a { color: var(--secondary); white-space: nowrap; }
+  .nav-links a:hover { color: var(--rust); text-decoration: none; }
+  .nav-links a.on { color: var(--rust); }
+
+  .overline { font-family: var(--mono); font-size: 11px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+
+  .doc { max-width: 720px; margin: 0 auto; padding: 56px 22px 72px; }
+  .doc h1 { font-family: var(--serif); font-size: clamp(32px, 5.4vw, 46px); color: var(--ink); font-weight: 600; letter-spacing: -0.012em; line-height: 1.08; margin-top: 12px; }
+  .doc .stamp { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--faint); margin-top: 14px; }
+  .doc h2 { font-family: var(--serif); font-size: 24px; color: var(--ink); font-weight: 600; margin: 38px 0 10px; }
+  .doc p { margin-bottom: 14px; }
+  .doc ul { margin: 0 0 14px 0; list-style: none; }
+  .doc li { display: flex; gap: 11px; padding: 7px 0; border-top: 1px solid var(--hairline); }
+  .doc li:first-child { border-top: 0; }
+  .doc li .k { color: var(--rust); font-family: var(--mono); font-size: 11px; padding-top: 4px; flex-shrink: 0; }
+  .doc hr { border: 0; height: 1px; background: var(--hairline); margin: 40px 0 0; }
+
+  .callout {
+    background: var(--study); border: 1px solid var(--study-border); border-radius: 14px;
+    padding: 20px 22px; margin-top: 28px;
+  }
+  .callout .overline { color: var(--rust); }
+  .callout p { font-family: var(--serif); font-size: 18px; line-height: 1.6; color: var(--body); margin: 8px 0 0; }
+
+  .card { background: var(--paper-bright); border: 1px solid var(--hairline); border-radius: 14px; padding: 18px 20px; margin-bottom: 14px; }
+  .card p:last-child { margin-bottom: 0; }
+
+  footer { border-top: 1px solid var(--hairline); background: var(--paper-warm); }
+  .foot-inner { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; justify-content: space-between; padding: 26px 22px; max-width: 1120px; margin: 0 auto; }
+  .foot-inner span { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; color: var(--muted); text-transform: uppercase; }
+  .foot-inner nav { display: flex; gap: 18px; font-size: 13.5px; }
+  .foot-inner nav a { color: var(--secondary); }
+
+  @media (max-width: 640px) {
+    .nav-inner { gap: 12px; }
+    .brand { font-size: 14.5px; }
+    .nav-links { gap: 14px; font-size: 12.5px; }
+    .doc { padding-top: 40px; }
+  }
+  @media (max-width: 430px) {
+    .nav-links a.hide-xs { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="index.html">
+      <img class="glyph" src="icon.png" alt="" width="28" height="28">
+      Medical Casebook
+    </a>
+    <nav class="nav-links">
+      <a href="index.html" class="hide-xs">Home</a>
+      <a href="privacy.html" class="on">Privacy</a>
+      <a href="support.html">Support</a>
+    </nav>
+  </div>
+</header>
+
+<main class="doc">
+  <p class="overline">Legal</p>
+  <h1>Privacy Policy</h1>
+  <p class="stamp">Last updated: September 11, 2026</p>
+
+  <div class="callout">
+    <p class="overline">The short version</p>
+    <p>Medical Casebook does not collect any data. There are no servers, no analytics, no accounts and no advertising. Everything you create in the app stays on your device and, if you use iCloud, in your own private iCloud account — which we cannot access.</p>
+  </div>
+
+  <h2>Data we collect</h2>
+  <p>None. Medical Casebook does not collect, store, transmit, sell or share any personal information or usage data. Under Apple's App Privacy definitions, the app's privacy label is <b>Data Not Collected</b>: no data linked to you, no data not linked to you, and no data used to track you.</p>
+
+  <h2>Where your content lives</h2>
+  <p>Your topics, tags, sources, notes and images are stored locally on your device using Apple's SwiftData framework. If you are signed in to iCloud, the app syncs that content across your own devices using Apple's CloudKit private database.</p>
+  <p>That data belongs to your Apple Account. It is encrypted in transit, governed by Apple's privacy policy, and is technically inaccessible to the developer of this app.</p>
+
+  <h2>Network requests</h2>
+  <p>The app works fully offline, with one optional exception: when you add a source, the app looks up its citation details. Depending on what you add, that means contacting a public bibliographic service for a DOI, a public book-data service for a scanned book, or the website you entered to read its title.</p>
+  <p>Those requests contain only the identifier you supplied — never your notes, your images, your identity or any device identifiers. If you never add a source, the app makes no network requests at all.</p>
+
+  <h2>Analytics, tracking and advertising</h2>
+  <ul>
+    <li><span class="k">&mdash;</span><span>No third-party analytics or crash-reporting SDKs.</span></li>
+    <li><span class="k">&mdash;</span><span>No advertising, ad networks or tracking of any kind.</span></li>
+    <li><span class="k">&mdash;</span><span>No cookies, fingerprinting or device identifiers.</span></li>
+  </ul>
+
+  <h2>Accounts</h2>
+  <p>The app requires no account, registration or login. We never see your email address, your name, or any other identifier.</p>
+
+  <h2>Children's privacy</h2>
+  <p>Medical Casebook is intended for medical professionals and trainees. Because the app collects no data from anyone, it likewise collects no data from children.</p>
+
+  <h2>Data deletion</h2>
+  <p>Because we hold no data about you, there is nothing for us to delete. You can remove all app content at any time by deleting content within the app, deleting the app itself, and — if you use iCloud sync — removing the app's data from iCloud in Settings &gt; Apple Account &gt; iCloud &gt; Manage Account Storage.</p>
+
+  <h2>Changes to this policy</h2>
+  <p>If a future version of the app ever changes how data is handled, this page and the App Store privacy label will be updated before that version ships, with the date above revised.</p>
+
+  <h2>Contact</h2>
+  <p>Questions about privacy? Email <a href="mailto:proceduralist@outlook.com">proceduralist@outlook.com</a>.</p>
+
+  <hr>
+</main>
+
+<footer>
+  <div class="foot-inner">
+    <span>&copy; 2026 Medical Casebook</span>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="https://apps.apple.com/us/app/medical-casebook/id6764286169?mt=12">Mac App Store</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="support.html">Support</a>
+      <a href="mailto:proceduralist@outlook.com">Contact</a>
+    </nav>
+  </div>
+</footer>
+
+</body>
+</html>
