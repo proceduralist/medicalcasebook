@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<title>Support — Medical Casebook</title>
+<meta name="description" content="Help, answers to common questions, and how to reach us about Medical Casebook for Mac, iPhone and iPad.">
+<style>
+  :root {
+    --paper: #F7F3EC; --paper-bright: #FDFBF6; --paper-warm: #F1EBDF; --bar: #FBF7EF;
+    --ink: #211D17; --headline: #2B2317; --body: #41392C; --secondary: #5C5240;
+    --muted: #877C67; --faint: #A3977F;
+    --hairline: #E4DDD0; --border: #D8CFBE;
+    --rust: #A3532F; --rust-deep: #8A4526; --chip: #EFE6D6;
+    --study: #F3EAD9; --study-border: #E0C9A6;
+    --serif: "New York", "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+    --sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+    --shadow-soft: 0 1px 2px rgba(60,45,20,0.05);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: var(--sans); color: var(--body); background: var(--paper);
+    -webkit-font-smoothing: antialiased; line-height: 1.6; font-size: 15px;
+  }
+  a { color: var(--rust); text-decoration: none; }
+  a:hover { color: var(--rust-deep); text-decoration: underline; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 22px; }
+
+  .nav {
+    position: sticky; top: 0; z-index: 60; background: rgba(247,243,236,0.86);
+    backdrop-filter: saturate(160%) blur(14px); -webkit-backdrop-filter: saturate(160%) blur(14px);
+    border-bottom: 1px solid var(--hairline);
+  }
+  .nav-inner { display: flex; align-items: center; gap: 20px; height: 56px; }
+  .brand { display: flex; align-items: center; gap: 10px; color: var(--ink); font-weight: 600; font-size: 16px; white-space: nowrap; }
+  .brand:hover { text-decoration: none; color: var(--ink); }
+  .glyph { width: 28px; height: 28px; border-radius: 7px; overflow: hidden; flex-shrink: 0; box-shadow: var(--shadow-soft); }
+  .nav-links { margin-left: auto; display: flex; gap: 20px; font-size: 13.5px; }
+  .nav-links a { color: var(--secondary); white-space: nowrap; }
+  .nav-links a:hover { color: var(--rust); text-decoration: none; }
+  .nav-links a.on { color: var(--rust); }
+
+  .overline { font-family: var(--mono); font-size: 11px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+
+  .doc { max-width: 760px; margin: 0 auto; padding: 56px 22px 72px; }
+  .doc h1 { font-family: var(--serif); font-size: clamp(32px, 5.4vw, 46px); color: var(--ink); font-weight: 600; letter-spacing: -0.012em; line-height: 1.08; margin-top: 12px; }
+  .doc .lede { font-size: 17px; color: var(--secondary); margin-top: 14px; }
+  .doc h2 { font-family: var(--serif); font-size: 26px; color: var(--ink); font-weight: 600; margin: 46px 0 16px; }
+  .doc p { margin-bottom: 14px; }
+  .doc p:last-child { margin-bottom: 0; }
+
+  .contact {
+    display: flex; flex-wrap: wrap; gap: 18px; align-items: center; justify-content: space-between;
+    background: var(--study); border: 1px solid var(--study-border); border-radius: 14px;
+    padding: 22px 24px; margin-top: 30px;
+  }
+  .contact .t { font-family: var(--serif); font-size: 21px; color: var(--ink); font-weight: 600; }
+  .contact .s { font-size: 13.5px; color: var(--secondary); margin-top: 5px; max-width: 44ch; }
+  .contact a.mail {
+    font-family: var(--mono); font-size: 12.5px; font-weight: 600; white-space: nowrap;
+    background: var(--ink); color: var(--paper-bright); border-radius: 999px; padding: 10px 20px;
+  }
+  .contact a.mail:hover { background: #000; color: var(--paper-bright); text-decoration: none; }
+
+  details {
+    background: var(--paper-bright); border: 1px solid var(--hairline);
+    border-radius: 12px; margin-bottom: 10px; overflow: hidden;
+  }
+  details[open] { border-color: var(--border); }
+  summary {
+    cursor: pointer; list-style: none; padding: 15px 18px;
+    font-size: 15.5px; font-weight: 600; color: var(--headline);
+    display: flex; align-items: flex-start; gap: 11px;
+  }
+  summary::-webkit-details-marker { display: none; }
+  summary::after {
+    content: "+"; margin-left: auto; font-family: var(--mono); font-size: 15px;
+    color: var(--rust); line-height: 1; padding-top: 2px;
+  }
+  details[open] summary::after { content: "\2212"; }
+  summary:hover { color: var(--rust); }
+  .answer { padding: 0 18px 18px; font-size: 14.5px; color: var(--secondary); }
+  .answer ul { list-style: none; margin-top: 8px; }
+  .answer li { display: flex; gap: 10px; padding: 6px 0; border-top: 1px solid var(--hairline); }
+  .answer li:first-child { border-top: 0; }
+  .answer li .k { color: var(--rust); font-family: var(--mono); font-size: 11px; padding-top: 4px; flex-shrink: 0; }
+
+  .req { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+  .req div { background: var(--paper-bright); border: 1px solid var(--hairline); border-radius: 12px; padding: 16px 18px; }
+  .req .l { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--rust); }
+  .req .v { font-size: 14.5px; color: var(--body); margin-top: 7px; }
+
+  footer { border-top: 1px solid var(--hairline); background: var(--paper-warm); }
+  .foot-inner { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; justify-content: space-between; padding: 26px 22px; max-width: 1120px; margin: 0 auto; }
+  .foot-inner span { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; color: var(--muted); text-transform: uppercase; }
+  .foot-inner nav { display: flex; gap: 18px; font-size: 13.5px; }
+  .foot-inner nav a { color: var(--secondary); }
+
+  @media (max-width: 640px) {
+    .nav-inner { gap: 12px; }
+    .brand { font-size: 14.5px; }
+    .nav-links { gap: 14px; font-size: 12.5px; }
+    .doc { padding-top: 40px; }
+    .contact { flex-direction: column; align-items: flex-start; }
+  }
+  @media (max-width: 430px) {
+    .nav-links a.hide-xs { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="index.html">
+      <span class="glyph">
+        <svg viewBox="0 0 1024 1024" aria-hidden="true">
+          <defs><linearGradient id="ic" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FAFEFD"/><stop offset="1" stop-color="#E7F4F1"/></linearGradient></defs>
+          <rect width="1024" height="1024" fill="url(#ic)"/>
+          <g stroke-width="64" fill="none">
+            <path d="M 584.5 241.5 A 280 280 0 0 0 351.4 282.6" stroke="#047857" stroke-linecap="round"/>
+            <path d="M 351.4 282.6 A 280 280 0 0 0 233.1 487.6" stroke="#168F70"/>
+            <path d="M 233.1 487.6 A 280 280 0 0 0 314.0 710.0" stroke="#28A689"/>
+            <path d="M 314.0 710.0 A 280 280 0 0 0 536.4 790.9" stroke="#3ABCA2"/>
+            <path d="M 536.4 790.9 A 280 280 0 0 0 741.4 672.6" stroke="#4CD3BB"/>
+            <path d="M 741.4 672.6 A 280 280 0 0 0 782.5 439.5" stroke="#5EEAD4" stroke-linecap="round"/>
+          </g>
+          <circle cx="710" cy="314" r="64" fill="#F7B231"/>
+        </svg>
+      </span>
+      Medical Casebook
+    </a>
+    <nav class="nav-links">
+      <a href="index.html" class="hide-xs">Home</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="support.html" class="on">Support</a>
+    </nav>
+  </div>
+</header>
+
+<main class="doc">
+  <p class="overline">Help</p>
+  <h1>Support</h1>
+  <p class="lede">Stuck on something? Found a bug? Have an idea that would make Medical Casebook better? We'd like to hear from you.</p>
+
+  <div class="contact">
+    <div>
+      <div class="t">Email support</div>
+      <div class="s">We aim to reply within two business days. If you are reporting a bug, include your device model and macOS or iOS version.</div>
+    </div>
+    <a class="mail" href="mailto:proceduralist@outlook.com">proceduralist@outlook.com</a>
+  </div>
+
+  <h2>Frequently asked questions</h2>
+
+  <details>
+    <summary>How do I capture a new topic?</summary>
+    <div class="answer">
+      <p>Open Capture from the sidebar, type the topic, and save. If you have written down something similar before, the app says so before you save, so you end up with one topic rather than two.</p>
+      <p>Every topic starts as Incomplete. Move it to Ongoing or Answered from its own page as you work through it.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>What is the difference between a topic and a group?</summary>
+    <div class="answer">
+      <p>A <b>topic</b> is one thing you are working out — a question, a concept, a technique. A <b>group</b> is a folder of related topics that you name yourself.</p>
+      <p>On the Mac, the Topics page is an A–Z index: groups and ungrouped topics sit together alphabetically, a letter strip jumps you down the list, and clicking a group opens it in the panel alongside. A topic does not need a group — it only joins one when you put it there.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>How does tagging work?</summary>
+    <div class="answer">
+      <p>Every topic can carry tags in four dimensions: Specialty, Anatomy, Disease and Kind. Open a topic, go to Tags, and add one. You can search the existing tags, create a new one by typing a name, and rename or delete any tag from the picker — right-click on Mac, long-press on iPhone.</p>
+      <p>Renaming a tag updates every topic that uses it.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>How do I add sources and citations?</summary>
+    <div class="answer">
+      <p>In a topic's Sources section, add a DOI or a link — or scan a book's barcode with the camera on iPhone and iPad. Citation details are fetched for you where they are available.</p>
+      <p>While writing on the Mac, use the cite button next to any source to drop a numbered citation into your note at the cursor. Citations renumber themselves as you add and reorder, and tapping one jumps to the source it points at.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>How do notes and sections work?</summary>
+    <div class="answer">
+      <p>Each topic has one note, written on the Mac as a set of named sections listed beside it. Add, rename, reorder and delete sections as the answer takes shape; the section list doubles as a table of contents for getting back to the part you want.</p>
+      <p>On iPhone and iPad the same note opens as an outline you can read section by section. That is what the phone is for — reviewing what you worked out, between cases or on the way home — rather than sitting down to write.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>What is Study Mode?</summary>
+    <div class="answer">
+      <p>Select a phrase in your note on the Mac and mark it to hide. With Study Mode on, every marked phrase is covered; click one to reveal it, and the section list shows how much is still hidden.</p>
+      <p>Turning Study Mode off restores everything. Hiding a phrase only affects how the note is displayed — nothing is removed from what you wrote, and exports are unaffected.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>What is the Case Repository?</summary>
+    <div class="answer">
+      <p>The repository collects your starred images from across every topic. Star an image and it appears there, carrying its topic's tags so you can filter by specialty.</p>
+      <p>To take an image out of the repository, tap its star again — either on the topic or on the repository tile. Removing it never deletes the image; it stays with the topic it came from.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>How do I export a topic to PDF?</summary>
+    <div class="answer">
+      <p>Open the topic and choose Share. The PDF includes the title, tags, note with its citations, numbered sources, and the topic's images, laid out as a document you can send on, archive or print.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>My content isn't syncing between devices.</summary>
+    <div class="answer">
+      <ul>
+        <li><span class="k">01</span><span>Make sure both devices are signed in to the same Apple Account.</span></li>
+        <li><span class="k">02</span><span>Check Settings &gt; Apple Account &gt; iCloud and confirm iCloud Drive and Medical Casebook are enabled.</span></li>
+        <li><span class="k">03</span><span>Confirm both devices have a network connection — sync pauses offline and catches up automatically.</span></li>
+        <li><span class="k">04</span><span>Low iCloud storage can stall sync; check your available space.</span></li>
+        <li><span class="k">05</span><span>If it still won't sync, restart both devices, then email us.</span></li>
+      </ul>
+    </div>
+  </details>
+
+  <details>
+    <summary>Is my content backed up? What if I delete the app?</summary>
+    <div class="answer">
+      <p>With iCloud sync on, your content lives in your private iCloud database and is restored automatically when you reinstall the app on any device signed in to the same Apple Account.</p>
+      <p>Without iCloud, your content exists only on that device and is included in normal device backups — deleting the app deletes its local content, so we recommend keeping iCloud sync on.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>I deleted something by accident.</summary>
+    <div class="answer">
+      <p>Deleted topics, notes and images go to Trash rather than disappearing. Open Trash on either platform to read what is in there and put it back.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>Does the app collect any of my data?</summary>
+    <div class="answer">
+      <p>No. There are no servers, accounts, analytics or tracking. Everything stays on your device and in your own private iCloud. See the <a href="privacy.html">privacy policy</a> for the details.</p>
+    </div>
+  </details>
+
+  <h2>Requirements</h2>
+  <div class="req">
+    <div><div class="l">Mac</div><div class="v">macOS 26.3 or later — <a href="https://apps.apple.com/us/app/medical-casebook/id6764286169?mt=12">on the Mac App Store</a></div></div>
+    <div><div class="l">iPhone / iPad</div><div class="v">iOS or iPadOS 26.4 or later — coming soon</div></div>
+    <div><div class="l">Sync</div><div class="v">Optional — requires iCloud</div></div>
+    <div><div class="l">Network</div><div class="v">Optional — only for source lookup</div></div>
+  </div>
+
+  <h2>Feature requests &amp; bug reports</h2>
+  <p>Email <a href="mailto:proceduralist@outlook.com">proceduralist@outlook.com</a> with the subject &ldquo;Feedback&rdquo;. For bugs, please include:</p>
+  <div class="answer" style="padding:0">
+    <ul>
+      <li><span class="k">01</span><span>What you did, what you expected, and what happened instead</span></li>
+      <li><span class="k">02</span><span>Your device model and macOS or iOS version</span></li>
+      <li><span class="k">03</span><span>A screenshot, if possible</span></li>
+    </ul>
+  </div>
+</main>
+
+<footer>
+  <div class="foot-inner">
+    <span>&copy; 2026 Medical Casebook</span>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="https://apps.apple.com/us/app/medical-casebook/id6764286169?mt=12">Mac App Store</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="support.html">Support</a>
+      <a href="mailto:proceduralist@outlook.com">Contact</a>
+    </nav>
+  </div>
+</footer>
+
+</body>
+</html>
